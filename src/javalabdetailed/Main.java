@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import DB.DBManager;
+import Styles.Colors;
+import Styles.Styles;
 import java.sql.*;
 import java.util.Comparator;
 
@@ -39,8 +41,8 @@ public class Main {
         l1.setFont(new Font("Arial", Font.BOLD, 21));
         registerForm.add(l1);
         auth.add(registerForm);
-        registerForm.setLayout(new GridLayout(22,1));
-        registerForm.setBorder(BorderFactory.createEmptyBorder(100,500,0,500));
+        registerForm.setLayout(new GridLayout(20,1));
+        registerForm.setBorder(BorderFactory.createEmptyBorder(80,500,0,500));
         
         // full name
         JLabel rl1 = new JLabel("Full Name : ");
@@ -94,7 +96,7 @@ public class Main {
         errors.add(cPassErr);
         errors.add(keyErr);
         for (JLabel l : errors) {
-            l.setForeground(Color.red);
+            l.setForeground(Color.decode("#f26878"));
             l.setFont(new Font("Arial", Font.PLAIN, 11));
         }
         
@@ -162,21 +164,56 @@ public class Main {
         JButton altB = new JButton("Login");
         altB.setContentAreaFilled(false);
         altB.setBorderPainted(false);
-        altB.setForeground(Color.blue);
+        altB.setForeground(Color.decode("#68b9f2"));
+        altB.setCursor(new Cursor(Cursor.HAND_CURSOR));
         switchToLogin.add(alt);
-        switchToLogin.add(altB);
+        switchToLogin.add(altB);    
         registerForm.add(switchToLogin);
         
         altB.addActionListener(e -> {
             registerForm.setVisible(false);
             login(auth,app);
         });
+        
+        ArrayList<JButton> btns = new ArrayList<>();
+        btns.add(rBtn);
+        Styles styles = new Styles();
+        
+        
+        ArrayList<JPanel> bgs = new ArrayList<>();
+        bgs.add(switchToLogin);
+        bgs.add(registerForm);
+        
+        
+        ArrayList<JLabel> labels = new ArrayList<>();
+        labels.add(alt);
+        labels.add(rl1);
+        labels.add(rl3);
+        labels.add(rl2);
+        labels.add(rl4);
+        labels.add(rl5);
+        
+        
+        ArrayList<JTextField> fields = new ArrayList<>();
+        fields.add(name);
+        fields.add(cPassword);
+        fields.add(authKey);
+        fields.add(email);
+        fields.add(password);
+        
+        styles.setButtonsStyling(btns);
+        styles.setBackgroundsStyling(bgs);
+        styles.setLabelStyling(labels);
+        styles.setTextFieldsStyling(fields);
+        styles.setTitleStyling(l1);
+        
     }
     public static void login(JFrame auth, JFrame app){
         UserManager authManager = new UserManager();
         
         auth.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
         
         auth.setSize(1920,1080);
         app.setSize(1920,1080);
@@ -192,8 +229,8 @@ public class Main {
         l1.setFont(new Font("Arial", Font.BOLD, 21));
         registerForm.add(l1);
         auth.add(registerForm);
-        registerForm.setLayout(new GridLayout(22,1));
-        registerForm.setBorder(BorderFactory.createEmptyBorder(150,500,0,500));
+        registerForm.setLayout(new GridLayout(16,1));
+        registerForm.setBorder(BorderFactory.createEmptyBorder(200,500,0,500));
         
         //email
         JLabel rl2 = new JLabel("Email : ");
@@ -220,7 +257,7 @@ public class Main {
         errors.add(emailErr);
         errors.add(passErr);
         for (JLabel l : errors) {
-            l.setForeground(Color.red);
+            l.setForeground(Color.decode("#f26878"));
             l.setFont(new Font("Arial", Font.PLAIN, 11));
         }
         
@@ -274,7 +311,8 @@ public class Main {
         JButton altB = new JButton("Register");
         altB.setContentAreaFilled(false);
         altB.setBorderPainted(false);
-        altB.setForeground(Color.blue);
+        altB.setForeground(Color.decode("#68b9f2"));
+        altB.setCursor(new Cursor(Cursor.HAND_CURSOR));
         switchToLogin.add(alt);
         switchToLogin.add(altB);
         registerForm.add(switchToLogin);
@@ -283,6 +321,33 @@ public class Main {
             registerForm.setVisible(false);
             register(auth, app);
         });
+        
+        ArrayList<JButton> btns = new ArrayList<>();
+        btns.add(rBtn);
+        Styles styles = new Styles();
+        styles.setButtonsStyling(btns);
+        
+        ArrayList<JPanel> bgs = new ArrayList<>();
+        bgs.add(switchToLogin);
+        bgs.add(registerForm);
+        
+        ArrayList<JLabel> labels = new ArrayList<>();
+        labels.add(alt);
+        labels.add(rl3);
+        labels.add(rl2);
+        
+        
+        ArrayList<JTextField> fields = new ArrayList<>();
+        fields.add(email);
+        fields.add(password);
+        
+        styles.setButtonsStyling(btns);
+        styles.setBackgroundsStyling(bgs);
+        styles.setLabelStyling(labels);
+        styles.setTextFieldsStyling(fields);
+        styles.setTitleStyling(l1);
+        
+         
     }
     
     public static void inventory(JFrame app){
@@ -306,6 +371,20 @@ public class Main {
         
         addProduct(entryForm, editBtn, addBtn, l1);
         monitorStocks(table);
+        
+        Styles styles = new Styles();
+        ArrayList<JPanel> bgs = new ArrayList<>();
+        bgs.add(entryForm);
+        bgs.add(btnPanel);
+        Colors colors = new Colors();
+//        pane.setBackground();
+        
+        ArrayList<JButton> btns = new ArrayList<>();
+        btns.add(editBtn);
+        btns.add(addBtn);
+        
+        styles.setBackgroundsStyling(bgs);
+        styles.setButtonsStyling(btns);
 
 }
     
@@ -388,7 +467,7 @@ public class Main {
         errors.add(sEmailErr);
 
         for (JLabel l : errors) {
-            l.setForeground(Color.red);
+            l.setForeground(Color.decode("#f26878"));
             l.setFont(new Font("Arial", Font.PLAIN, 11));
         }
         
@@ -466,6 +545,41 @@ public class Main {
                 editBtn.setEnabled(false);
             }
         });
+        
+        Styles styles = new Styles();
+        ArrayList<JPanel> bgs = new ArrayList<>();
+        bgs.add(form);
+        bgs.add(left);
+        bgs.add(right);
+        
+        ArrayList<JButton> btns = new ArrayList<>();
+        btns.add(editBtn);
+        btns.add(addBtn);
+        btns.add(addProductButton);
+        
+        ArrayList<JTextField> fields = new ArrayList<>();
+        fields.add(sName);
+        fields.add(pName);
+        fields.add(pCateg);
+        fields.add(pPrice);
+        fields.add(pQty);
+        fields.add(sEmail);
+        
+        ArrayList<JLabel> labels = new ArrayList<>();
+        labels.add(pNameLabel);
+        labels.add(pCategLabel);
+        labels.add(pPriceLabel);
+        labels.add(pQtyLabel);
+        labels.add(sNameLabel);
+        labels.add(sEmailLabel);
+        
+        styles.setBackgroundsStyling(bgs);
+        styles.setTextFieldsStyling(fields);
+        styles.setButtonsStyling(btns);
+        styles.setLabelStyling(labels);
+        styles.setTitleStyling(title);
+        
+        
     }
     
     public static void editProduct(JPanel entryForm, JButton addBtn, JButton editBtn, JLabel title){
@@ -664,6 +778,36 @@ public class Main {
                 addBtn.setEnabled(false);
             }
         });
+        
+        ArrayList<JButton> allBtns = new ArrayList<>();
+        allBtns.add(editBtn);
+        allBtns.add(addBtn);
+        allBtns.add(loadProductButton);
+        allBtns.add(saveProductButton);
+        
+        ArrayList<JPanel> bgs = new ArrayList<>();
+        bgs.add(left);
+        bgs.add(right);
+        bgs.add(form);
+        bgs.add(btns);
+        
+        
+        ArrayList<JLabel> labels = new ArrayList<>();
+        labels.add(pIDLabel);
+        labels.add(pNameLabel);
+        labels.add(pCategLabel);
+        labels.add(pPriceLabel);
+        labels.add(pQtyLabel);
+        labels.add(sNameLabel);
+        labels.add(sEmailLabel);
+        
+        Styles styles = new Styles();
+        styles.setBackgroundsStyling(bgs);
+        styles.setTextFieldsStyling(inputs);
+        styles.setButtonsStyling(allBtns);
+        styles.setLabelStyling(labels);
+        styles.setTitleStyling(title);
+        
     }
     
     public static DefaultTableModel stockTableModel; // Accessible model for external updates
@@ -709,8 +853,4 @@ public class Main {
 
         tab.add(container, BorderLayout.CENTER);
     }
-    
-
-
-
 }
