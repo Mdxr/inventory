@@ -8,15 +8,35 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import DB.DBManager;
-import Styles.Colors;
 import Styles.Styles;
+//import Styles.Colors;
+//import Styles.Styles;
 import java.sql.*;
 import java.util.Comparator;
+import com.formdev.flatlaf.*;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class Main {
     public static boolean editMode;
 
     public static void main(String[] args) {
+        try {
+            // Set FlatLaf Dark theme
+            UIManager.put("Component.focusColor", Color.decode("#73d187"));
+            UIManager.put("Component.outlineColor", Color.decode("#4CAF93"));
+            UIManager.put("TabbedPane.underlineColor", Color.decode("#73d187"));
+            UIManager.put("Component.arc", 10); // default is 5
+            UIManager.put("Button.arc", 10);
+            UIManager.put("ProgressBar.arc", 10);
+            UIManager.put("TextComponent.arc", 10); // text fields, password fields, etc.
+            UIManager.put("CheckBox.arc", 10);
+            UIManager.put("TabbedPane.tabArc", 10);
+
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         JFrame auth = new JFrame("Auth");
         JFrame app = new JFrame("App");
         register(auth, app);
@@ -35,7 +55,9 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        auth.setVisible(true);
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            auth.setVisible(true);
+        });
         JPanel registerForm = new JPanel();
         JLabel l1 = new JLabel("Register");
         l1.setFont(new Font("Arial", Font.BOLD, 21));
@@ -177,7 +199,7 @@ public class Main {
         
         ArrayList<JButton> btns = new ArrayList<>();
         btns.add(rBtn);
-        Styles styles = new Styles();
+//        Styles styles = new Styles();
         
         
         ArrayList<JPanel> bgs = new ArrayList<>();
@@ -201,11 +223,11 @@ public class Main {
         fields.add(email);
         fields.add(password);
         
-        styles.setButtonsStyling(btns);
-        styles.setBackgroundsStyling(bgs);
-        styles.setLabelStyling(labels);
-        styles.setTextFieldsStyling(fields);
-        styles.setTitleStyling(l1);
+//        styles.setButtonsStyling(btns);
+//        styles.setBackgroundsStyling(bgs);
+//        styles.setLabelStyling(labels);
+//        styles.setTextFieldsStyling(fields);
+//        styles.setTitleStyling(l1);
         
     }
     public static void login(JFrame auth, JFrame app){
@@ -324,8 +346,8 @@ public class Main {
         
         ArrayList<JButton> btns = new ArrayList<>();
         btns.add(rBtn);
-        Styles styles = new Styles();
-        styles.setButtonsStyling(btns);
+//        Styles styles = new Styles();
+//        styles.setButtonsStyling(btns);
         
         ArrayList<JPanel> bgs = new ArrayList<>();
         bgs.add(switchToLogin);
@@ -341,11 +363,11 @@ public class Main {
         fields.add(email);
         fields.add(password);
         
-        styles.setButtonsStyling(btns);
-        styles.setBackgroundsStyling(bgs);
-        styles.setLabelStyling(labels);
-        styles.setTextFieldsStyling(fields);
-        styles.setTitleStyling(l1);
+//        styles.setButtonsStyling(btns);
+//        styles.setBackgroundsStyling(bgs);
+//        styles.setLabelStyling(labels);
+//        styles.setTextFieldsStyling(fields);
+//        styles.setTitleStyling(l1);
         
          
     }
@@ -354,9 +376,14 @@ public class Main {
         JTabbedPane pane = new JTabbedPane();
         JPanel entryForm = new JPanel();
         JPanel table = new JPanel();
-        pane.addTab("Entry", entryForm);
-        pane.addTab("Monitor Stocks", table);
+        
+        ImageIcon entryIcon = new ImageIcon(Main.class.getResource("/Media/square-pen.png"));
+        ImageIcon monitorIcon = new ImageIcon(Main.class.getResource("/Media/square-activity.png"));
+        
+        pane.addTab("Entry",entryIcon, entryForm);
+        pane.addTab("Monitor Stocks",monitorIcon, table);
         app.add(pane);
+        
         
         JPanel btnPanel = new JPanel();
         JLabel l1 = new JLabel("Product Entry");
@@ -364,7 +391,14 @@ public class Main {
         JButton editBtn = new JButton("Edit Existing Product");
         addBtn.setEnabled(false);
         l1.setFont(new Font("Arial", Font.BOLD, 21));
-        entryForm.add(l1);
+//        entryForm.add(l1);
+        ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
+        Image logoImage = logo.getImage();
+        Image resizedLogo = logoImage.getScaledInstance(320, 50, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon(resizedLogo);
+        JLabel logoLabel = new JLabel(logoIcon);
+        
+        entryForm.add(logoLabel);
         btnPanel.add(addBtn);
         btnPanel.add(editBtn);
         entryForm.add(btnPanel);
@@ -372,26 +406,26 @@ public class Main {
         addProduct(entryForm, editBtn, addBtn, l1);
         monitorStocks(table);
         
-        Styles styles = new Styles();
+//        Styles styles = new Styles();
         ArrayList<JPanel> bgs = new ArrayList<>();
         bgs.add(entryForm);
         bgs.add(btnPanel);
-        Colors colors = new Colors();
+//        Colors colors = new Colors();
 //        pane.setBackground();
-        
+//        
         ArrayList<JButton> btns = new ArrayList<>();
         btns.add(editBtn);
         btns.add(addBtn);
         
-        styles.setBackgroundsStyling(bgs);
-        styles.setButtonsStyling(btns);
-
+//        styles.setBackgroundsStyling(bgs);
+//        styles.setButtonsStyling(btns);
+        notificationHandler(app);
 }
     
     public static void addProduct(JPanel entryForm, JButton editBtn, JButton addBtn, JLabel title){
         ProductManager productManager = new ProductManager();
         SupplierManager supplierManager = new SupplierManager();
-        title.setText("Product Entry : Addition Mode");
+        title.setText("Product Entry : Add Mode");
         
         JPanel form = new JPanel();
         JPanel left = new JPanel();
@@ -406,27 +440,32 @@ public class Main {
         
         
         JLabel pNameLabel = new JLabel("Product Name : ");
-        JTextField pName = new JTextField(50);
+        JTextField pName = new JTextField(30);
         JLabel pNameErr = new JLabel();
         JLabel pCategLabel = new JLabel("Product Category : ");
-        JTextField pCateg = new JTextField(50);
+        JTextField pCateg = new JTextField(30);
         JLabel pCategErr = new JLabel();
         JLabel pQtyLabel = new JLabel("Product Quantity : ");
-        JTextField pQty = new JTextField(50);
+        JTextField pQty = new JTextField(30);
         JLabel pQtyErr = new JLabel();
         JLabel pPriceLabel = new JLabel("Product Price : ");
-        JTextField pPrice = new JTextField(50);
+        JTextField pPrice = new JTextField(30);
         JLabel pPriceErr = new JLabel();
         
         
         JLabel sNameLabel = new JLabel("Supplier Name : ");
-        JTextField sName = new JTextField(50);
+        JTextField sName = new JTextField(30);
         JLabel sNameErr = new JLabel();
         JLabel sEmailLabel = new JLabel("Supplier Email : ");
-        JTextField sEmail = new JTextField(50);
+        JTextField sEmail = new JTextField(30);
         JLabel sEmailErr = new JLabel();
         
+        ImageIcon darkSaveIcon = new ImageIcon(Main.class.getResource("/Media/saveDark.png"));
+        JLabel dSIcon = new JLabel(darkSaveIcon);
+        dSIcon.setBorder(BorderFactory.createEmptyBorder(0, 130, 0, 0));
+        
         JButton addProductButton = new JButton("Add Product");
+        addProductButton.add(dSIcon);
 
         left.add(pNameLabel);
         left.add(pName);
@@ -449,7 +488,7 @@ public class Main {
         right.add(sEmailErr);
 
         entryForm.setLayout(new FlowLayout());
-        entryForm.setBorder(BorderFactory.createEmptyBorder(50, 500, 0, 500));
+        entryForm.setBorder(BorderFactory.createEmptyBorder(70, 500, 0, 500));
         
         entryForm.add(form);
         right.add(new JLabel(""));
@@ -472,6 +511,7 @@ public class Main {
         }
         
         addProductButton.addActionListener(e -> {
+            try{
             if (pName.getText().isEmpty()) {
                 pNameErr.setText("Name is Required!");
             } else {
@@ -524,14 +564,24 @@ public class Main {
                     sName.setText("");
                     sEmail.setText("");
                     status.setText(product.getName() + " Added Successfully");
-                    status.setForeground(Color.green);
+                    status.setForeground(Color.decode("#73d187"));
+                    populateTable();
                 } else {
                     status.setText("Error Occured adding " + product.getName());
-                    status.setForeground(Color.red);
+                    status.setForeground(Color.decode("#f26878"));
                 }
                 if(result.contains("updated")){
                     status.setText(product.getName() + " Updated SuccessFully");
+                    status.setForeground(Color.decode("#73d187"));
+                    for(JLabel error: errors){
+                        error.setText("");
+                    }
                 }
+            }
+            
+            } catch (NumberFormatException ne){
+                status.setText("Invalid Data types");
+                status.setForeground(Color.decode("#f26878"));
             }
 
         });
@@ -546,7 +596,7 @@ public class Main {
             }
         });
         
-        Styles styles = new Styles();
+//        Styles styles = new Styles();
         ArrayList<JPanel> bgs = new ArrayList<>();
         bgs.add(form);
         bgs.add(left);
@@ -572,13 +622,15 @@ public class Main {
         labels.add(pQtyLabel);
         labels.add(sNameLabel);
         labels.add(sEmailLabel);
-        
-        styles.setBackgroundsStyling(bgs);
-        styles.setTextFieldsStyling(fields);
+        Styles styles = new Styles();
+//        styles.setBackgroundsStyling(bgs);
+//        styles.setTextFieldsStyling(fields);
         styles.setButtonsStyling(btns);
-        styles.setLabelStyling(labels);
-        styles.setTitleStyling(title);
-        
+//        styles.setLabelStyling(labels);
+//        styles.setTitleStyling(title);
+
+    addProductButton.setBackground(Color.decode("#73d187"));
+    addProductButton.setForeground(Color.DARK_GRAY);
         
     }
     
@@ -598,30 +650,47 @@ public class Main {
         
         
         JLabel pNameLabel = new JLabel("Product Name : ");
-        JTextField pName = new JTextField(50);
+        JTextField pName = new JTextField(30);
         JLabel pNameErr = new JLabel();
         JLabel pCategLabel = new JLabel("Product Category : ");
-        JTextField pCateg = new JTextField(50);
+        JTextField pCateg = new JTextField(30);
         JLabel pCategErr = new JLabel();
         JLabel pQtyLabel = new JLabel("Product Quantity : ");
-        JTextField pQty = new JTextField(50);
+        JTextField pQty = new JTextField(30);
         JLabel pQtyErr = new JLabel();
         JLabel pPriceLabel = new JLabel("Product Price : ");
-        JTextField pPrice = new JTextField(50);
+        JTextField pPrice = new JTextField(30);
         JLabel pPriceErr = new JLabel();
         
         JLabel pIDLabel = new JLabel("Product ID : ");
-        JTextField pID = new JTextField(50);
+        JTextField pID = new JTextField(30);
         JLabel pIDErr = new JLabel();
         JLabel sNameLabel = new JLabel("Supplier Name : ");
-        JTextField sName = new JTextField(50);
+        JTextField sName = new JTextField(30);
         JLabel sNameErr = new JLabel();
         JLabel sEmailLabel = new JLabel("Supplier Email : ");
-        JTextField sEmail = new JTextField(50);
+        JTextField sEmail = new JTextField(30);
         JLabel sEmailErr = new JLabel();
         
+        ImageIcon loadIcon = new ImageIcon(Main.class.getResource("/Media/load.png"));
+        JLabel lIcon = new JLabel(loadIcon);
+        
+        ImageIcon saveIcon = new ImageIcon(Main.class.getResource("/Media/save.png"));
+        JLabel sIcon = new JLabel(saveIcon);
+        
+        ImageIcon darkSaveIcon = new ImageIcon(Main.class.getResource("/Media/saveDark.png"));
+        JLabel dSIcon = new JLabel(darkSaveIcon);
+
         JButton saveProductButton = new JButton("Save Product");
         JButton loadProductButton = new JButton("Load Product");
+        
+        lIcon.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 0));
+        loadProductButton.add(lIcon);
+        
+        sIcon.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 0));
+        dSIcon.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 0));
+        saveProductButton.add(sIcon);
+
         saveProductButton.setEnabled(false);
         
         JPanel btns = new JPanel();
@@ -652,7 +721,7 @@ public class Main {
         right.add(sEmailErr);
         
         entryForm.setLayout(new FlowLayout());
-        entryForm.setBorder(BorderFactory.createEmptyBorder(50, 500, 0, 500));
+        entryForm.setBorder(BorderFactory.createEmptyBorder(70, 500, 0, 500));
         
         entryForm.add(form);
         right.add(new JLabel(""));
@@ -683,6 +752,7 @@ public class Main {
             if(pID.getText().isEmpty()){
                 pIDErr.setText("ID is required!");
             } else {
+                
                 pIDErr.setText("");
                 ProductSupplierPair pair = productManager.loadProduct(parseInt(pID.getText()));
                 if(pair != null){
@@ -697,6 +767,9 @@ public class Main {
                         err.setText("");
                     }
                     status.setText("Loaded successfully");
+                    saveProductButton.remove(sIcon);
+                    saveProductButton.add(dSIcon);
+                    status.setForeground(Color.decode("#73d187"));
                     
                     saveProductButton.addActionListener(f -> {
                         if(pName.getText().isEmpty()){
@@ -753,9 +826,18 @@ public class Main {
                                 for(JTextField tF: inputs){
                                     tF.setText("");
                                 }
+
+                                populateTable();
                             } else {
                                 status.setText("Error Occurred!");
                             }
+                            
+                            
+                        }
+                        if(status.getText().contains("Updated Successfully!")){
+                                for(JLabel error: errors){
+                                    error.setText("");
+                                }
                         }
                 });
                     
@@ -785,6 +867,9 @@ public class Main {
         allBtns.add(loadProductButton);
         allBtns.add(saveProductButton);
         
+        Styles styles = new Styles();
+        styles.setButtonsStyling(allBtns);
+        
         ArrayList<JPanel> bgs = new ArrayList<>();
         bgs.add(left);
         bgs.add(right);
@@ -801,27 +886,37 @@ public class Main {
         labels.add(sNameLabel);
         labels.add(sEmailLabel);
         
-        Styles styles = new Styles();
-        styles.setBackgroundsStyling(bgs);
-        styles.setTextFieldsStyling(inputs);
-        styles.setButtonsStyling(allBtns);
-        styles.setLabelStyling(labels);
-        styles.setTitleStyling(title);
+//        Styles styles = new Styles();
+//        styles.setBackgroundsStyling(bgs);
+//        styles.setTextFieldsStyling(inputs);
+//        styles.setButtonsStyling(allBtns);
+//        styles.setLabelStyling(labels);
+//        styles.setTitleStyling(title);
+
+    saveProductButton.setBackground(Color.decode("#73d187"));
+    saveProductButton.setForeground(Color.DARK_GRAY);
+    
+    for(JLabel error: errors){
+            error.setForeground(Color.decode("#f26878"));
+            error.setFont(new Font("Arial", Font.PLAIN, 11));
+    }
         
     }
     
-    public static DefaultTableModel stockTableModel; // Accessible model for external updates
+    public static DefaultTableModel stockTableModel; 
 
     public static void monitorStocks(JPanel tab) {
-        StocksMonitoring monitor = new StocksMonitoring();
         tab.setLayout(new BorderLayout());
-        tab.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+        tab.setBorder(BorderFactory.createEmptyBorder(5, 20, 0, 20));
+        
+        ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
+        Image logoImage = logo.getImage();
+        Image resizedLogo = logoImage.getScaledInstance(320, 50, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon(resizedLogo);
 
-        JLabel title = new JLabel("Monitor Stocks", SwingConstants.CENTER);
+        JLabel title = new JLabel(logoIcon, SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 21));
-        JButton refresh = new JButton("refresh");
         tab.add(title, BorderLayout.NORTH);
-        tab.add(refresh, BorderLayout.SOUTH);
         
         
 
@@ -833,17 +928,7 @@ public class Main {
                 return false;
             }
         };
-        
-        refresh.addActionListener(e -> {
-            stockTableModel.setRowCount(0);
-            ArrayList<ProductSupplierPair> products = monitor.loadProducts();
-            products.sort(Comparator.comparingInt(p -> p.getProduct().getQuantity()));
-            for(ProductSupplierPair product: products){
-                System.out.println(product.getProduct().getName() + " " + product.getSupplier().getEmail());
-                stockTableModel.addRow(new Object[]{product.getProduct().getID(), product.getProduct().getName(), product.getProduct().getCategory(), product.getProduct().getQuantity(), product.getProduct().getPrice() , product.getTotalAmount(), product.getSupplier().getID() ,product.getSupplier().getName(), product.getSupplier().getEmail()});
-            }
-        });
-        
+        populateTable();
        
         JTable table = new JTable(stockTableModel);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -852,5 +937,99 @@ public class Main {
         container.add(scrollPane, BorderLayout.CENTER);
 
         tab.add(container, BorderLayout.CENTER);
+    }
+    
+    public static void populateTable(){
+        StocksMonitoring monitor = new StocksMonitoring();
+        stockTableModel.setRowCount(0);
+        ArrayList<ProductSupplierPair> products = monitor.loadProducts();
+        products.sort(Comparator.comparingInt(p -> p.getProduct().getQuantity()));
+        for (ProductSupplierPair product : products) {
+            stockTableModel.addRow(new Object[]{product.getProduct().getID(), product.getProduct().getName(), product.getProduct().getCategory(), product.getProduct().getQuantity(), product.getProduct().getPrice(), product.getTotalAmount(), product.getSupplier().getID(), product.getSupplier().getName(), product.getSupplier().getEmail()});
+        }
+    }
+    public static DefaultTableModel reorderTableModel;
+
+    public static void notificationHandler(JFrame app){
+        JDialog notificationPopUp = new JDialog(app, "Reorder Products");
+        notificationPopUp.setLocationRelativeTo(null);
+        notificationPopUp.setSize(600, 300);    
+        JButton cancel = new JButton("CANCEL");
+        cancel.setFont(new Font("Arial", Font.BOLD, 12));
+        cancel.setBackground(Color.decode("#f26878"));
+        cancel.setForeground(Color.DARK_GRAY);
+        
+        cancel.setMargin(new Insets(7,7,7,7));
+        
+        ImageIcon cancelIconImage = new ImageIcon(Main.class.getResource("/Media/circle.png"));
+        JLabel cancelIcon = new JLabel(cancelIconImage);
+        cancelIcon.setBorder(BorderFactory.createEmptyBorder(0,230,0,0));
+        cancel.add(cancelIcon);
+        cancel.addActionListener(e -> {
+            notificationPopUp.dispose();
+        });
+        
+        JPanel container = new JPanel();
+        container.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
+        
+        
+        
+        notificationPopUp.add(container);
+        renderReorderProducts(container, notificationPopUp, cancel);
+    }
+    
+    public static void renderReorderProducts(JPanel container, JDialog popUp, JButton cancel) {
+        container.removeAll();
+        ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
+        Image logoImage = logo.getImage();
+        Image resizedLogo = logoImage.getScaledInstance(192, 30, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon(resizedLogo);
+        JLabel logoLabel = new JLabel(logoIcon);
+        
+        container.add(logoLabel);
+        Reorder reorder = new Reorder();
+        ArrayList<ProductSupplierPair> products = reorder.loadProducts();
+        ImageIcon darkSaveIcon = new ImageIcon(Main.class.getResource("/Media/saveDark.png"));
+        if (!products.isEmpty()) {
+            container.setLayout(new GridLayout(0, 1, 10, 10));
+            for (ProductSupplierPair product : products) {
+                JLabel dSIcon = new JLabel(darkSaveIcon);
+                dSIcon.setBorder(BorderFactory.createEmptyBorder(0,8,0,0));
+                JPanel panel = new JPanel();
+                panel.setLayout(new GridLayout(1, 4, 10, 0));
+                panel.add(new JLabel(product.getProduct().getName()));
+                JLabel qtylabel = new JLabel("Quantity (Present : " + product.getProduct().getQuantity() + ")", SwingConstants.RIGHT);
+                qtylabel.setFont(new Font("Arial", Font.BOLD, 12));
+                panel.add(qtylabel);
+                JTextField reorderQty = new JTextField(5);
+                JButton reorderBtn = new JButton("Reorder");
+                reorderBtn.add(dSIcon);
+                reorderBtn.setBackground(Color.decode("#73d187"));
+                reorderBtn.setForeground(Color.DARK_GRAY);
+                reorderBtn.setFont(new Font("Arial", Font.BOLD, 12));
+                panel.add(qtylabel);
+                panel.add(reorderQty);
+                panel.add(reorderBtn);
+                container.add(panel);
+                reorderBtn.addActionListener(e -> {
+                    if (!reorderQty.getText().isEmpty()) {
+                        reorder.ReorderProduct(product.getProduct(), parseInt(reorderQty.getText()));
+                        renderReorderProducts(container, popUp, cancel);
+                        populateTable();
+                    }
+                    if (products.isEmpty()) {
+                        popUp.setVisible(false);
+                        popUp.dispose();
+                    } else {
+                        popUp.pack();
+                    }
+                });
+            }
+            container.add(cancel); 
+            popUp.setVisible(true);
+        } else {
+            popUp.setVisible(false);
+        }
+        popUp.pack();
     }
 }

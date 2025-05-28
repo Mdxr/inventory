@@ -18,5 +18,4 @@ public class Colors {
     public Color grey = Color.decode("#3d3d3d");
     public Color lightGrey = Color.decode("#737272");
     
-    
 }

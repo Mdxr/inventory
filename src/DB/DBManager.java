@@ -10,8 +10,8 @@ import java.sql.SQLException;
 
 public class DBManager {
     private static final String URL = "jdbc:mysql://localhost:3306/crud";
-    private static final String USER = "root";         // Change to your DB user
-    private static final String PASSWORD = "ressadum"; // Change to your DB password
+    private static final String USER = "root";
+    private static final String PASSWORD = "ressadum";
 
     public static Connection getConnection() {
         try {
@@ -25,7 +25,6 @@ public class DBManager {
         return null;
     }
 
-    // Optional close method if you manually close connections elsewhere
     public static void closeConnection(Connection conn) {
         try {
             if (conn != null && !conn.isClosed()) {

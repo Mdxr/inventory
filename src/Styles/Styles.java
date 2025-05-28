@@ -6,6 +6,7 @@ package Styles;
 
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -18,36 +19,15 @@ public class Styles {
     Colors colors = new Colors();
     public void setButtonsStyling(ArrayList<JButton> btns){
         for(JButton btn: btns){
-            btn.setBackground(colors.grey);
-            btn.setForeground(colors.lightWhite);
-            btn.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(colors.borderWhite), BorderFactory.createEmptyBorder(5,10,5,10)));
+            btn.setMargin(new Insets(7,10,7,10));
+            btn.setFont(new Font("Arial", Font.BOLD, 12));
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            
-            btn.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) {
-                    if(btn.isEnabled()){
-                        btn.setBackground(colors.lightGrey);
-                        btn.setForeground(colors.lightWhite);
-                    }
-                }
-
-                public void mouseExited(MouseEvent e) {
-                    btn.setBackground(colors.grey);
-                    btn.setForeground(colors.lightWhite);
-                }
-            });
-
-        }
-    }
-    public void setBackgroundsStyling(ArrayList<JPanel> panels){
-        for(JPanel panel : panels){
-            panel.setBackground(colors.darkGrey);
         }
     }
     public void setTextFieldsStyling(ArrayList<JTextField> fields){
         for(JTextField field : fields){
-            field.setBackground(colors.lightBlack);
-            field.setForeground(colors.lightGrey);
+//            field.setBackground(colors.lightBlack);
+//            field.setForeground(colors.lightGrey);
             field.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(colors.borderWhite), BorderFactory.createEmptyBorder(5,10,5,10)));
         }
     }
