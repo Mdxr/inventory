@@ -51,7 +51,10 @@ public class UserManager {
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
                 if(BCrypt.checkpw(user.getPassword(), rs.getString("password"))){
-                    return "success";
+                    if(rs.getString("email").contains("super")){
+                        return "success (super)";
+                    }
+                    return "success (basic)";
                 } else {
                     return "Password is invalid!";
                 }

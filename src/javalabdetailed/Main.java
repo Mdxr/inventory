@@ -7,10 +7,9 @@ import static java.lang.Integer.parseInt;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import com.formdev.flatlaf.ui.FlatRoundBorder;
 import DB.DBManager;
 import Styles.Styles;
-//import Styles.Colors;
-//import Styles.Styles;
 import java.sql.*;
 import java.util.Comparator;
 import com.formdev.flatlaf.*;
@@ -19,6 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class Main {
     public static boolean editMode;
+    public static boolean isSuper;
 
     public static void main(String[] args) {
         try {
@@ -256,7 +256,7 @@ public class Main {
         
         //email
         JLabel rl2 = new JLabel("Email : ");
-        JTextField email = new JTextField("kmudasser44@gmail.com");
+        JTextField email = new JTextField("admin@super");
         JLabel emailErr = new JLabel();
         registerForm.add(rl2);
         registerForm.add(email);
@@ -264,7 +264,7 @@ public class Main {
         
         //password
         JLabel rl3 = new JLabel("Password : ");
-        JTextField password = new JTextField("RESSADUM");
+        JTextField password = new JTextField("SUPERADMIN");
         JLabel passErr = new JLabel();
         registerForm.add(rl3);
         registerForm.add(password);
@@ -312,13 +312,19 @@ public class Main {
                 user.setEmail(email.getText());
                 user.setPassword(password.getText());
                 String result = authManager.login(user);
-                if(!result.equals("success")){
+                if(!result.contains("success")){
                     if(result.contains("Password")){
                         passErr.setText(result);
                     } else {
                         emailErr.setText(result);
                     }
                 } else {
+                    if(result.contains("super")){
+                        isSuper = true;
+                    } else {
+                        isSuper = false;
+                    }
+                    
                     auth.setVisible(false);
                     inventory(app);
                     app.setVisible(true);
@@ -376,24 +382,26 @@ public class Main {
         JTabbedPane pane = new JTabbedPane();
         JPanel entryForm = new JPanel();
         JPanel table = new JPanel();
+        JPanel adminPanel = new JPanel();
         
         ImageIcon entryIcon = new ImageIcon(Main.class.getResource("/Media/square-pen.png"));
         ImageIcon monitorIcon = new ImageIcon(Main.class.getResource("/Media/square-activity.png"));
-        
+        ImageIcon adminIcon = new ImageIcon(Main.class.getResource("/Media/fullscreen.png"));
         pane.addTab("Entry",entryIcon, entryForm);
         pane.addTab("Monitor Stocks",monitorIcon, table);
+        if(isSuper){
+            pane.addTab("Admin Panel", adminIcon, adminPanel);
+        }
         app.add(pane);
         
         
         JPanel btnPanel = new JPanel();
-        JLabel l1 = new JLabel("Product Entry");
         JButton addBtn = new JButton("Add New Product");
         JButton editBtn = new JButton("Edit Existing Product");
         addBtn.setEnabled(false);
-        l1.setFont(new Font("Arial", Font.BOLD, 21));
-//        entryForm.add(l1);
         ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
         Image logoImage = logo.getImage();
+        
         Image resizedLogo = logoImage.getScaledInstance(320, 50, Image.SCALE_SMOOTH);
         ImageIcon logoIcon = new ImageIcon(resizedLogo);
         JLabel logoLabel = new JLabel(logoIcon);
@@ -403,7 +411,7 @@ public class Main {
         btnPanel.add(editBtn);
         entryForm.add(btnPanel);
         
-        addProduct(entryForm, editBtn, addBtn, l1);
+        addProduct(entryForm, editBtn, addBtn);
         monitorStocks(table);
         
 //        Styles styles = new Styles();
@@ -420,13 +428,81 @@ public class Main {
 //        styles.setBackgroundsStyling(bgs);
 //        styles.setButtonsStyling(btns);
         notificationHandler(app);
-}
+        adminPanel(adminPanel);
+    }
     
-    public static void addProduct(JPanel entryForm, JButton editBtn, JButton addBtn, JLabel title){
+    public static void adminPanel(JPanel adminPanel){
+        adminPanel.setLayout(new BoxLayout(adminPanel, BoxLayout.Y_AXIS));
+        adminPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 20, 20));
+        ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
+        Image logoImage = logo.getImage();
+        
+        Image resizedLogo = logoImage.getScaledInstance(320, 50, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon(resizedLogo);
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        adminPanel.add(logoLabel);
+        
+        JPanel container = new JPanel();
+        container.setLayout(new GridLayout(1, 2, 20, 20));
+        
+        JPanel left = new JPanel();
+        JPanel right = new JPanel();
+        
+        left.setBackground(Color.decode("#46494b"));
+        right.setBackground(Color.decode("#46494b"));
+        left.setBorder(new FlatRoundBorder());
+        right.setBorder(new FlatRoundBorder());
+        
+        JLabel leftTitle = new JLabel("Manage Stocks");
+        JLabel rightTitle = new JLabel("Manage Users");
+        leftTitle.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
+        leftTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rightTitle.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
+        leftTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        rightTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        
+        left.add(leftTitle);
+        right.add(rightTitle);
+        
+        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+        
+        container.add(left);
+        container.add(right);
+        adminPanel.add(container);
+        manageStocks(left);
+    }
+    
+    public static void manageStocks(JPanel container){
+        JPanel records = new JPanel();
+        records.setLayout(new BoxLayout(records, BoxLayout.Y_AXIS));
+        records.setBorder(BorderFactory.createEmptyBorder(10,10,5,10));
+        records.setBackground(Color.decode("#46494b"));
+        JPanel record = new JPanel();
+        record.setLayout(new BorderLayout());
+        JLabel details = new JLabel("E5540 by DELL");
+        details.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+        JPanel actionButtons = new JPanel();
+        JButton reorder = new JButton("Reorder");
+        JButton delete = new JButton("Delete");
+        actionButtons.add(reorder);
+        actionButtons.add(delete);
+        actionButtons.setOpaque(false);
+        record.add(details, BorderLayout.WEST);
+        record.add(actionButtons, BorderLayout.EAST);
+        delete.setMargin(new Insets(5,10,5,10));
+        reorder.setMargin(new Insets(5,10,5,10));
+        record.setMaximumSize(new Dimension(Short.MAX_VALUE, record.getPreferredSize().height));
+        record.setBorder(new FlatRoundBorder());
+        records.add(record);
+        container.add(records);
+        
+    }
+    
+    public static void addProduct(JPanel entryForm, JButton editBtn, JButton addBtn){
         ProductManager productManager = new ProductManager();
         SupplierManager supplierManager = new SupplierManager();
-        title.setText("Product Entry : Add Mode");
-        
+
         JPanel form = new JPanel();
         JPanel left = new JPanel();
         JPanel right = new JPanel();
@@ -589,7 +665,7 @@ public class Main {
         editBtn.addActionListener(e -> {
             if(!editMode){
                 form.setVisible(false);
-                editProduct(entryForm, addBtn, editBtn, title);
+                editProduct(entryForm, addBtn, editBtn);
                 editMode = true;
                 addBtn.setEnabled(true);
                 editBtn.setEnabled(false);
@@ -634,9 +710,8 @@ public class Main {
         
     }
     
-    public static void editProduct(JPanel entryForm, JButton addBtn, JButton editBtn, JLabel title){
+    public static void editProduct(JPanel entryForm, JButton addBtn, JButton editBtn){
         ProductManager productManager = new ProductManager();
-        title.setText("Product Entry : Edit Mode");
         JPanel form = new JPanel();
         JPanel left = new JPanel();
         JPanel right = new JPanel();
@@ -854,7 +929,7 @@ public class Main {
         addBtn.addActionListener(e -> {
             if(editMode){
                 form.setVisible(false);
-                addProduct(entryForm, editBtn, addBtn, title);
+                addProduct(entryForm, editBtn, addBtn);
                 editMode = false;
                 editBtn.setEnabled(true);
                 addBtn.setEnabled(false);
