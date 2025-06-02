@@ -133,5 +133,15 @@ public class ProductManager {
             return "Error Fetching Supplier " + e;
         }
     }
+    public void deleteProduct(int id){
+        String sql = "DELETE FROM products WHERE id=?";
+        try(Connection conn = DBManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            stmt.execute();
+        } catch (SQLException e){
+            System.out.println("Error deleting record " + e);
+        }
+    }
     
 }

@@ -12,6 +12,7 @@ public class User {
     private String name;
     private String email;
     private String password;
+    private boolean isVerified;
     
     public User(){
         this.id = 0;
@@ -35,6 +36,15 @@ public class User {
     }
     public void setID(int id){
         this.id = id;
+    }
+    public int getID(){
+        return id;
+    }
+    public void setVerfied(boolean status){
+        this.isVerified = status;
+    }
+    public boolean getVerified(){
+        return isVerified;
     }
     public void setName(String name){
         this.name = name;

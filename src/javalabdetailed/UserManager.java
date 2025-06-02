@@ -51,10 +51,14 @@ public class UserManager {
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
                 if(BCrypt.checkpw(user.getPassword(), rs.getString("password"))){
-                    if(rs.getString("email").contains("super")){
-                        return "success (super)";
+                    if(rs.getBoolean("verified")){
+                        if(rs.getString("email").contains("super")){
+                            return "success (super)";
+                        }
+                        return "success (basic)";
                     }
-                    return "success (basic)";
+                    return "unverified";
+                    
                 } else {
                     return "Password is invalid!";
                 }
@@ -66,5 +70,61 @@ public class UserManager {
             return "Error Logging in!" + e;
         }
     }
+    
+    public ArrayList<User> fetchUsers(){
+        ArrayList<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users";
+        try(Connection conn = DBManager.getConnection();
+                Statement stmt = conn.createStatement()){
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                User tempUser = new User(rs.getString("name"), rs.getString("email"), rs.getString("password"));
+                tempUser.setVerfied(rs.getBoolean("verified"));
+                tempUser.setID(rs.getInt("id"));
+                users.add(tempUser);
+            }
+        } catch (SQLException e){
+            System.out.println("Error fetching users " + e);
+        }
+        return users;
+    }
+    
+    public void approveUser(int id){
+        String sql = "UPDATE users SET verified=1 WHERE id=?";
+        try(Connection conn = DBManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            
+            stmt.execute();
+        } catch (SQLException e){
+            System.out.println("Error approving admin " + e);
+        }
+    }
+    
+    public void provokeUser(int id){
+        String sql = "UPDATE users SET verified=0 WHERE id=?";
+        try(Connection conn = DBManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            
+            stmt.execute();
+        } catch (SQLException e){
+            System.out.println("Error provoking admin " + e);
+        }
+    }
+    
+    public void deleteUser(int id){
+        String sql = "DELETE FROM users WHERE id=?";
+        try(Connection conn = DBManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            
+            stmt.execute();
+        } catch (SQLException e){
+            System.out.println("Error deleting admin " + e);
+        }
+    }
+    
+    
 
 }

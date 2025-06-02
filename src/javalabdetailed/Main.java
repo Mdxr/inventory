@@ -315,6 +315,8 @@ public class Main {
                 if(!result.contains("success")){
                     if(result.contains("Password")){
                         passErr.setText(result);
+                    } else if(result.contains("unverified")){
+                        emailErr.setText("Admin has not been verified");
                     } else {
                         emailErr.setText(result);
                     }
@@ -428,10 +430,10 @@ public class Main {
 //        styles.setBackgroundsStyling(bgs);
 //        styles.setButtonsStyling(btns);
         notificationHandler(app);
-        adminPanel(adminPanel);
+        adminPanel(adminPanel, pane);
     }
     
-    public static void adminPanel(JPanel adminPanel){
+    public static void adminPanel(JPanel adminPanel, JTabbedPane pane){
         adminPanel.setLayout(new BoxLayout(adminPanel, BoxLayout.Y_AXIS));
         adminPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 20, 20));
         ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
@@ -458,6 +460,7 @@ public class Main {
         JLabel rightTitle = new JLabel("Manage Users");
         leftTitle.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
         leftTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rightTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         rightTitle.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
         leftTitle.setFont(new Font("Arial", Font.BOLD, 16));
         rightTitle.setFont(new Font("Arial", Font.BOLD, 16));
@@ -466,37 +469,154 @@ public class Main {
         right.add(rightTitle);
         
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+        right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
         
         container.add(left);
         container.add(right);
         adminPanel.add(container);
-        manageStocks(left);
+        manageStocks(left, pane, leftTitle);
+        manageUsers(right, rightTitle);
     }
     
-    public static void manageStocks(JPanel container){
+    public static void manageStocks(JPanel container, JTabbedPane pane, JLabel title){
+        ProductManager manager = new ProductManager();
+        StocksMonitoring monitor = new StocksMonitoring();
         JPanel records = new JPanel();
+        records.setBorder(BorderFactory.createEmptyBorder());
+        container.removeAll();
+        container.add(title);
+        JScrollPane scrollPane = new JScrollPane(records);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         records.setLayout(new BoxLayout(records, BoxLayout.Y_AXIS));
-        records.setBorder(BorderFactory.createEmptyBorder(10,10,5,10));
+        records.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         records.setBackground(Color.decode("#46494b"));
-        JPanel record = new JPanel();
-        record.setLayout(new BorderLayout());
-        JLabel details = new JLabel("E5540 by DELL");
-        details.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
-        JPanel actionButtons = new JPanel();
-        JButton reorder = new JButton("Reorder");
-        JButton delete = new JButton("Delete");
-        actionButtons.add(reorder);
-        actionButtons.add(delete);
-        actionButtons.setOpaque(false);
-        record.add(details, BorderLayout.WEST);
-        record.add(actionButtons, BorderLayout.EAST);
-        delete.setMargin(new Insets(5,10,5,10));
-        reorder.setMargin(new Insets(5,10,5,10));
-        record.setMaximumSize(new Dimension(Short.MAX_VALUE, record.getPreferredSize().height));
-        record.setBorder(new FlatRoundBorder());
-        records.add(record);
-        container.add(records);
         
+        ArrayList<ProductSupplierPair> products = monitor.loadProducts();
+        ImageIcon reorderIconImage = new ImageIcon(Main.class.getResource("/Media/rotate-cw.png"));
+        ImageIcon deleteIconImage = new ImageIcon(Main.class.getResource("/Media/trash-2.png"));
+
+        for(ProductSupplierPair product : products){
+            JPanel record = new JPanel();
+            record.setLayout(new BorderLayout());
+            JLabel details = new JLabel(product.getProduct().getName().toUpperCase() + " BY " + product.getSupplier().getName().toUpperCase());
+            details.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+            JPanel actionButtons = new JPanel();
+            JButton reorder = new JButton("");
+            JButton delete = new JButton("");
+            reorder.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            delete.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            actionButtons.add(reorder);
+            actionButtons.add(delete);
+            actionButtons.setOpaque(false);
+            actionButtons.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0));
+            record.add(details, BorderLayout.WEST);
+            record.add(actionButtons, BorderLayout.EAST);
+            delete.setMargin(new Insets(6,6,6,6));
+            
+            JLabel trashIcon = new JLabel(deleteIconImage);
+            
+            JLabel rotateIcon = new JLabel(reorderIconImage);
+            
+            reorder.add(rotateIcon);
+            delete.setForeground(Color.DARK_GRAY);
+            delete.add(trashIcon);
+            reorder.setMargin(new Insets(6,7,6,7));
+            reorder.setBackground(Color.decode("#73d187"));
+            delete.setBackground(Color.decode("#f26878"));
+
+            reorder.addActionListener(e -> {
+                pane.setSelectedIndex(0);
+            });
+            delete.addActionListener(e -> {
+                manager.deleteProduct(product.getProduct().getID());
+                manageStocks(container, pane, title);
+                populateTable();
+            });
+            record.setMaximumSize(new Dimension(Short.MAX_VALUE, record.getPreferredSize().height));
+            record.setBorder(new FlatRoundBorder());
+            records.add(record);
+        }
+        container.add(scrollPane);
+        
+    }
+    
+    public static void manageUsers(JPanel container, JLabel title){
+        UserManager manager = new UserManager();
+        JPanel records = new JPanel();
+        records.setBorder(BorderFactory.createEmptyBorder());
+        container.removeAll();
+        container.add(title);
+        JScrollPane scrollPane = new JScrollPane(records);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        records.setLayout(new BoxLayout(records, BoxLayout.Y_AXIS));
+        records.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        records.setBackground(Color.decode("#46494b"));
+        
+        ArrayList<User> users = manager.fetchUsers();
+        
+        ImageIcon deleteIconImage = new ImageIcon(Main.class.getResource("/Media/trash-2.png"));
+        ImageIcon approveIconImage = new ImageIcon(Main.class.getResource("/Media/circle-check.png"));
+        ImageIcon provokeIconImage = new ImageIcon(Main.class.getResource("/Media/circle.png"));
+        
+        for(User user : users){
+            if(!user.getEmail().contains("super")){
+                JPanel record = new JPanel();
+                record.setLayout(new BorderLayout());
+                JLabel details = new JLabel(user.getName() + " | " + user.getEmail());
+                details.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+                JPanel actionButtons = new JPanel();
+
+                if(user.getVerified()){
+                    JButton provokeBtn = new JButton("");
+                    provokeBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    provokeBtn.setMargin(new Insets(6,6,6,6));
+                    provokeBtn.add(new JLabel(provokeIconImage));
+                    actionButtons.add(provokeBtn);
+                    
+                    provokeBtn.setBackground(Color.decode("#f26878"));
+
+                    provokeBtn.addActionListener(e -> {
+                        manager.provokeUser(user.getID());
+                        manageUsers(container, title);
+                    });
+
+                } else {
+                    JButton approveBtn = new JButton("");
+                    approveBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    approveBtn.setBackground(Color.decode("#73d187"));
+                    approveBtn.add(new JLabel(approveIconImage));
+                    approveBtn.setMargin(new Insets(6,6,6,6));
+                    actionButtons.add(approveBtn);
+
+                    approveBtn.addActionListener(e -> {
+                        manager.approveUser(user.getID());
+                        manageUsers(container, title);
+                    });
+                }
+
+                JButton delete = new JButton("Delete");
+                delete.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                delete.add(new JLabel(deleteIconImage));
+                delete.setBackground(Color.decode("#f26878"));
+
+                actionButtons.add(delete);
+                actionButtons.setOpaque(false);
+                actionButtons.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0));
+                record.add(details, BorderLayout.WEST);
+                record.add(actionButtons, BorderLayout.EAST);
+                delete.setMargin(new Insets(6,7,6,7));
+                delete.addActionListener(e -> {
+                    manager.deleteUser(user.getID());
+                    manageUsers(container,title);
+                });
+                record.setMaximumSize(new Dimension(Short.MAX_VALUE, record.getPreferredSize().height));
+                record.setBorder(new FlatRoundBorder());
+                records.add(record);
+            }
+        }   
+        container.add(scrollPane);
     }
     
     public static void addProduct(JPanel entryForm, JButton editBtn, JButton addBtn){
