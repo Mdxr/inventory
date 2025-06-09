@@ -9,11 +9,11 @@ package javalabdetailed;
  * @author mudasser
  */
 public class Product {
-    private int id;
-    private String name;
-    private String category;
-    private int quantity;
-    private double price;
+    protected int id;
+    protected String name;
+    protected String category;
+    protected int quantity;
+    protected double price;
     
     public Product(){
         this.name = "";

@@ -5,16 +5,13 @@ import java.awt.*;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import com.formdev.flatlaf.ui.FlatRoundBorder;
-import DB.DBManager;
 import Styles.Styles;
-import java.sql.*;
-import java.util.Comparator;
 import com.formdev.flatlaf.*;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Main {
     public static boolean editMode;
@@ -22,14 +19,13 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            // Set FlatLaf Dark theme
             UIManager.put("Component.focusColor", Color.decode("#73d187"));
             UIManager.put("Component.outlineColor", Color.decode("#4CAF93"));
             UIManager.put("TabbedPane.underlineColor", Color.decode("#73d187"));
-            UIManager.put("Component.arc", 10); // default is 5
+            UIManager.put("Component.arc", 10);
             UIManager.put("Button.arc", 10);
             UIManager.put("ProgressBar.arc", 10);
-            UIManager.put("TextComponent.arc", 10); // text fields, password fields, etc.
+            UIManager.put("TextComponent.arc", 10);
             UIManager.put("CheckBox.arc", 10);
             UIManager.put("TabbedPane.tabArc", 10);
 
@@ -59,12 +55,19 @@ public class Main {
             auth.setVisible(true);
         });
         JPanel registerForm = new JPanel();
-        JLabel l1 = new JLabel("Register");
-        l1.setFont(new Font("Arial", Font.BOLD, 21));
-        registerForm.add(l1);
+        
+        ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
+        Image logoImage = logo.getImage();
+        
+        Image resizedLogo = logoImage.getScaledInstance(320, 50, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon(resizedLogo);
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        registerForm.add(logoLabel);
         auth.add(registerForm);
-        registerForm.setLayout(new GridLayout(20,1));
-        registerForm.setBorder(BorderFactory.createEmptyBorder(80,500,0,500));
+        registerForm.setLayout(new GridLayout(18,1));
+        registerForm.setBorder(BorderFactory.createEmptyBorder(130,500,0,500));
         
         // full name
         JLabel rl1 = new JLabel("Full Name : ");
@@ -84,7 +87,7 @@ public class Main {
         
         //password
         JLabel rl3 = new JLabel("Password : ");
-        JTextField password = new JTextField();
+        JPasswordField password = new JPasswordField();
         JLabel passErr = new JLabel();
         registerForm.add(rl3);
         registerForm.add(password);
@@ -92,20 +95,13 @@ public class Main {
         
         //confirm password
         JLabel rl4 = new JLabel("Confirm Password : ");
-        JTextField cPassword = new JTextField();
+        JPasswordField cPassword = new JPasswordField();
         JLabel cPassErr = new JLabel();
         registerForm.add(rl4);
         registerForm.add(cPassword);
         registerForm.add(cPassErr);
         
-        //auth key
-        JLabel rl5 = new JLabel("Authentication Key : ");
-        JTextField authKey = new JTextField();
-        JLabel keyErr = new JLabel();
-        registerForm.add(rl5);
-        registerForm.add(authKey);
-        registerForm.add(keyErr);
-        
+       
         //submit button
         JButton rBtn = new JButton("Register");
         registerForm.add(rBtn);
@@ -116,11 +112,16 @@ public class Main {
         errors.add(emailErr);
         errors.add(passErr);
         errors.add(cPassErr);
-        errors.add(keyErr);
         for (JLabel l : errors) {
             l.setForeground(Color.decode("#f26878"));
             l.setFont(new Font("Arial", Font.PLAIN, 11));
         }
+        
+        ArrayList<JTextField> fields = new ArrayList<>();
+        fields.add(name);
+        fields.add(email);
+        fields.add(password);
+        fields.add(cPassword);
         
         // register user setup
         rBtn.addActionListener(e -> {
@@ -139,28 +140,19 @@ public class Main {
             }
             
             //check pass
-            if(password.getText().isEmpty()){
+            if(new String(password.getPassword()).isEmpty()){
                 passErr.setText("Password is Required!");
-            } else if(password.getText().length() < 8){
-                passErr.setText("Passwors should be atleast 8 characters long!");
+            } else if(password.getPassword().length < 8){
+                passErr.setText("Password should be atleast 8 characters long!");
             } else {
                 passErr.setText("");
             }
             
             // check confrim password
-            if(cPassword.getText().isEmpty() || !cPassword.getText().equals(password.getText())){
+            if(new String(cPassword.getPassword()).isEmpty() || !new String(cPassword.getPassword()).equals(new String(password.getPassword()))){
                 cPassErr.setText("Confirm Password!");
             } else {
                 cPassErr.setText("");
-            }
-            
-            //check key
-            if(authKey.getText().isEmpty()){
-                keyErr.setText("Key is Required!");
-            } else if(!authKey.getText().equals(LocalDate.now().toString())){
-                keyErr.setText("Invalid Authentication Key!");
-            } else {
-                keyErr.setText("");
             }
             
             boolean clean = true;
@@ -171,11 +163,16 @@ public class Main {
                 }
             }
             if(clean){
-                User user = new User(name.getText(), email.getText(), password.getText());
+                User user = new User(name.getText(), email.getText(), password.getPassword());
                 String result = authManager.register(user);
                 if(!result.equals("success")){
                     emailErr.setText(result);
+                } else {
+                    for(JTextField field : fields){
+                        field.setText("");
+                    }
                 }
+                
             }
  
         });
@@ -213,16 +210,9 @@ public class Main {
         labels.add(rl3);
         labels.add(rl2);
         labels.add(rl4);
-        labels.add(rl5);
         
         
-        ArrayList<JTextField> fields = new ArrayList<>();
-        fields.add(name);
-        fields.add(cPassword);
-        fields.add(authKey);
-        fields.add(email);
-        fields.add(password);
-        
+       
 //        styles.setButtonsStyling(btns);
 //        styles.setBackgroundsStyling(bgs);
 //        styles.setLabelStyling(labels);
@@ -244,15 +234,21 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
+        ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
+        Image logoImage = logo.getImage();
+        
+        Image resizedLogo = logoImage.getScaledInstance(320, 50, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon(resizedLogo);
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         auth.setVisible(true);
         JPanel registerForm = new JPanel();
-        JLabel l1 = new JLabel("Login");
-        l1.setFont(new Font("Arial", Font.BOLD, 21));
-        registerForm.add(l1);
+        registerForm.add(logoLabel);
         auth.add(registerForm);
-        registerForm.setLayout(new GridLayout(16,1));
-        registerForm.setBorder(BorderFactory.createEmptyBorder(200,500,0,500));
+        registerForm.setLayout(new GridLayout(14,1));
+        registerForm.setBorder(BorderFactory.createEmptyBorder(220,500,0,500));
         
         //email
         JLabel rl2 = new JLabel("Email : ");
@@ -264,7 +260,7 @@ public class Main {
         
         //password
         JLabel rl3 = new JLabel("Password : ");
-        JTextField password = new JTextField("SUPERADMIN");
+        JPasswordField password = new JPasswordField("SUPERADMIN");
         JLabel passErr = new JLabel();
         registerForm.add(rl3);
         registerForm.add(password);
@@ -283,7 +279,7 @@ public class Main {
             l.setFont(new Font("Arial", Font.PLAIN, 11));
         }
         
-        // register user setup
+        // login user setup
         rBtn.addActionListener(e -> {
             //check email
             if(email.getText().isEmpty()){
@@ -293,7 +289,7 @@ public class Main {
             }
             
             //check pass
-            if(password.getText().isEmpty()){
+            if(password.getPassword().length == 0){
                 passErr.setText("Password is Required!");
             } else {
                 passErr.setText("");
@@ -310,7 +306,7 @@ public class Main {
             if(clean){
                 User user = new User();
                 user.setEmail(email.getText());
-                user.setPassword(password.getText());
+                user.setPassword(password.getPassword());
                 String result = authManager.login(user);
                 if(!result.contains("success")){
                     if(result.contains("Password")){
@@ -385,12 +381,16 @@ public class Main {
         JPanel entryForm = new JPanel();
         JPanel table = new JPanel();
         JPanel adminPanel = new JPanel();
+        JPanel historyPanel = new JPanel();
         
         ImageIcon entryIcon = new ImageIcon(Main.class.getResource("/Media/square-pen.png"));
         ImageIcon monitorIcon = new ImageIcon(Main.class.getResource("/Media/square-activity.png"));
         ImageIcon adminIcon = new ImageIcon(Main.class.getResource("/Media/fullscreen.png"));
-        pane.addTab("Entry",entryIcon, entryForm);
+        ImageIcon historyIcon = new ImageIcon(Main.class.getResource("/Media/history.png"));
+        
+        pane.addTab("Product Entry",entryIcon, entryForm);
         pane.addTab("Monitor Stocks",monitorIcon, table);
+        pane.addTab("History Logs", historyIcon, historyPanel);
         if(isSuper){
             pane.addTab("Admin Panel", adminIcon, adminPanel);
         }
@@ -429,11 +429,55 @@ public class Main {
         
 //        styles.setBackgroundsStyling(bgs);
 //        styles.setButtonsStyling(btns);
-        notificationHandler(app);
-        adminPanel(adminPanel, pane);
+        notificationHandler(app, new ProductSupplierPair(new Product(), new Supplier()));
+        adminPanel(adminPanel, pane, app);
+        historyPanel(historyPanel, pane);
     }
     
-    public static void adminPanel(JPanel adminPanel, JTabbedPane pane){
+    public static DefaultTableModel historyTableModel;
+    
+    public static void historyPanel(JPanel panel, JTabbedPane pane){
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 20, 20, 20));
+        
+        ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
+        Image logoImage = logo.getImage();
+        
+        Image resizedLogo = logoImage.getScaledInstance(320, 50, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon(resizedLogo);
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(logoLabel);
+        
+        String[] columnNames = {"ID", "Product", "Supplier", "Operation", "Dated"};
+
+        historyTableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        JTable table = new JTable(historyTableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        JPanel container = new JPanel(new BorderLayout());
+        container.add(scrollPane, BorderLayout.CENTER);
+
+        panel.add(container);
+        updateHistory();
+    }
+    public static void updateHistory(){
+        HistoryManager manager = new HistoryManager();
+        historyTableModel.setRowCount(0);
+        ArrayList<HistoryLog> logs = manager.fetchLogs();
+
+        for (HistoryLog log : logs) {
+            historyTableModel.addRow(new Object[]{log.getID(), log.getProduct().getName(), log.getSupplier().getName(), log.getOperation(), log.getDate()});
+        }
+    }
+    
+    public static void adminPanel(JPanel adminPanel, JTabbedPane pane, JFrame frame){
         adminPanel.setLayout(new BoxLayout(adminPanel, BoxLayout.Y_AXIS));
         adminPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 20, 20));
         ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
@@ -474,12 +518,15 @@ public class Main {
         container.add(left);
         container.add(right);
         adminPanel.add(container);
-        manageStocks(left, pane, leftTitle);
+        manageStocks(left, pane, leftTitle, frame);
         manageUsers(right, rightTitle);
     }
     
-    public static void manageStocks(JPanel container, JTabbedPane pane, JLabel title){
+    public static void manageStocks(JPanel container, JTabbedPane pane, JLabel title, JFrame frame){
         ProductManager manager = new ProductManager();
+        SupplierManager supplierManager = new SupplierManager();
+        HistoryManager historyManager = new HistoryManager();
+        
         StocksMonitoring monitor = new StocksMonitoring();
         JPanel records = new JPanel();
         records.setBorder(BorderFactory.createEmptyBorder());
@@ -504,6 +551,10 @@ public class Main {
             JPanel actionButtons = new JPanel();
             JButton reorder = new JButton("");
             JButton delete = new JButton("");
+            JLabel reorderLabel = new JLabel("reorder");
+            reorderLabel.setBorder(BorderFactory.createEmptyBorder(0, 23, 0, 0));
+            reorderLabel.setForeground(Color.DARK_GRAY);
+            reorder.add(reorderLabel);
             reorder.setCursor(new Cursor(Cursor.HAND_CURSOR));
             delete.setCursor(new Cursor(Cursor.HAND_CURSOR));
             actionButtons.add(reorder);
@@ -526,15 +577,22 @@ public class Main {
             delete.setBackground(Color.decode("#f26878"));
 
             reorder.addActionListener(e -> {
-                pane.setSelectedIndex(0);
+                notificationHandler(frame, product);
             });
             delete.addActionListener(e -> {
                 manager.deleteProduct(product.getProduct().getID());
-                manageStocks(container, pane, title);
-                populateTable();
+                product.getSupplier().setID(supplierManager.getSupplierID(product.getSupplier().getName(), product.getSupplier().getEmail()));
+                product.getProduct().setID(manager.getProductID(product.getProduct().getName(), product.getSupplier().getID()));
+                
+                historyManager.addLog(new HistoryLog(0, "Deleted", product.getProduct(), product.getSupplier(), ""));
+                
+                manageStocks(container, pane, title, frame);
+                populateTable(0);
+                updateHistory();
             });
             record.setMaximumSize(new Dimension(Short.MAX_VALUE, record.getPreferredSize().height));
             record.setBorder(new FlatRoundBorder());
+            
             records.add(record);
         }
         container.add(scrollPane);
@@ -569,25 +627,33 @@ public class Main {
                 JPanel actionButtons = new JPanel();
 
                 if(user.getVerified()){
-                    JButton provokeBtn = new JButton("");
-                    provokeBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    provokeBtn.setMargin(new Insets(6,6,6,6));
-                    provokeBtn.add(new JLabel(provokeIconImage));
-                    actionButtons.add(provokeBtn);
+                    JButton refuseBtn = new JButton("");
+                    JLabel refuseLabel = new JLabel("Revoke");
+                    refuseLabel.setForeground(Color.DARK_GRAY);
+                    refuseLabel.setBorder(BorderFactory.createEmptyBorder(0, 21, 0, 0));
+                    refuseBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    refuseBtn.setMargin(new Insets(6,10,6,10));
+                    refuseBtn.add(new JLabel(provokeIconImage));
+                    refuseBtn.add(refuseLabel);
+                    actionButtons.add(refuseBtn);
                     
-                    provokeBtn.setBackground(Color.decode("#f26878"));
+                    refuseBtn.setBackground(Color.decode("#f26878"));
 
-                    provokeBtn.addActionListener(e -> {
+                    refuseBtn.addActionListener(e -> {
                         manager.provokeUser(user.getID());
                         manageUsers(container, title);
                     });
 
                 } else {
                     JButton approveBtn = new JButton("");
+                    JLabel approveLabel = new JLabel("Approve");
+                    approveLabel.setForeground(Color.DARK_GRAY);
+                    approveLabel.setBorder(BorderFactory.createEmptyBorder(0, 21, 0, 0));
                     approveBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
                     approveBtn.setBackground(Color.decode("#73d187"));
                     approveBtn.add(new JLabel(approveIconImage));
-                    approveBtn.setMargin(new Insets(6,6,6,6));
+                    approveBtn.add(approveLabel);
+                    approveBtn.setMargin(new Insets(6,10,6,10));
                     actionButtons.add(approveBtn);
 
                     approveBtn.addActionListener(e -> {
@@ -596,7 +662,7 @@ public class Main {
                     });
                 }
 
-                JButton delete = new JButton("Delete");
+                JButton delete = new JButton("");
                 delete.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 delete.add(new JLabel(deleteIconImage));
                 delete.setBackground(Color.decode("#f26878"));
@@ -622,7 +688,8 @@ public class Main {
     public static void addProduct(JPanel entryForm, JButton editBtn, JButton addBtn){
         ProductManager productManager = new ProductManager();
         SupplierManager supplierManager = new SupplierManager();
-
+        HistoryManager historyManager = new HistoryManager();
+        
         JPanel form = new JPanel();
         JPanel left = new JPanel();
         JPanel right = new JPanel();
@@ -752,6 +819,9 @@ public class Main {
                 Product product = new Product(0, pName.getText(), pCateg.getText(), parseInt(pQty.getText()), parseDouble(pPrice.getText()));
                 
                 String result = productManager.addProduct(product, supplier);
+                
+                supplier.setID(supplierManager.getSupplierID(supplier.getName(), supplier.getEmail()));
+                product.setID(productManager.getProductID(product.getName(), supplier.getID()));
                 if(result.contains("success")){
                     pName.setText("");
                     pCateg.setText("");
@@ -759,19 +829,24 @@ public class Main {
                     pPrice.setText("");
                     sName.setText("");
                     sEmail.setText("");
-                    status.setText(product.getName() + " Added Successfully");
+                    status.setText(product.getName() + " Added Successfully ");
                     status.setForeground(Color.decode("#73d187"));
-                    populateTable();
+                    historyManager.addLog(new HistoryLog(0, "Added", product, supplier, ""));
+                    populateTable(0);
+                    updateHistory();
                 } else {
                     status.setText("Error Occured adding " + product.getName());
                     status.setForeground(Color.decode("#f26878"));
                 }
                 if(result.contains("updated")){
-                    status.setText(product.getName() + " Updated SuccessFully");
+                    status.setText(product.getName() + " Updated SuccessFully ");
                     status.setForeground(Color.decode("#73d187"));
                     for(JLabel error: errors){
                         error.setText("");
                     }
+                    historyManager.addLog(new HistoryLog(0, "Updated", product, supplier, ""));
+                    populateTable(0);
+                    updateHistory();
                 }
             }
             
@@ -832,6 +907,8 @@ public class Main {
     
     public static void editProduct(JPanel entryForm, JButton addBtn, JButton editBtn){
         ProductManager productManager = new ProductManager();
+        HistoryManager historyManager = new HistoryManager();
+        SupplierManager supplierManager = new SupplierManager();
         JPanel form = new JPanel();
         JPanel left = new JPanel();
         JPanel right = new JPanel();
@@ -947,7 +1024,6 @@ public class Main {
             if(pID.getText().isEmpty()){
                 pIDErr.setText("ID is required!");
             } else {
-                
                 pIDErr.setText("");
                 ProductSupplierPair pair = productManager.loadProduct(parseInt(pID.getText()));
                 if(pair != null){
@@ -1015,19 +1091,22 @@ public class Main {
                             Product product = new Product(parseInt(pID.getText()), pName.getText(), pCateg.getText(), parseInt(pQty.getText()), parseDouble(pPrice.getText()));
                             Supplier supplier = new Supplier(0, sName.getText(), sEmail.getText());
                             
+                            supplier.setID(supplierManager.getSupplierID(supplier.getName(), supplier.getEmail()));
+                            product.setID(productManager.getProductID(product.getName(), supplier.getID()));
+                            
                             String result = productManager.updateProduct(product, supplier);
                             if(result.contains("success")){
                                 status.setText("Updated Successfully!");
+                                historyManager.addLog(new HistoryLog(0, "Updated", product, supplier, ""));
                                 for(JTextField tF: inputs){
                                     tF.setText("");
                                 }
 
-                                populateTable();
+                                populateTable(0);
+                                updateHistory();
                             } else {
                                 status.setText("Error Occurred!");
                             }
-                            
-                            
                         }
                         if(status.getText().contains("Updated Successfully!")){
                                 for(JLabel error: errors){
@@ -1101,20 +1180,69 @@ public class Main {
     public static DefaultTableModel stockTableModel; 
 
     public static void monitorStocks(JPanel tab) {
-        tab.setLayout(new BorderLayout());
+        tab.setLayout(new BoxLayout(tab, BoxLayout.Y_AXIS));
         tab.setBorder(BorderFactory.createEmptyBorder(5, 20, 0, 20));
         
         ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
         Image logoImage = logo.getImage();
         Image resizedLogo = logoImage.getScaledInstance(320, 50, Image.SCALE_SMOOTH);
         ImageIcon logoIcon = new ImageIcon(resizedLogo);
-
-        JLabel title = new JLabel(logoIcon, SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 21));
-        tab.add(title, BorderLayout.NORTH);
         
+        ImageIcon sortByAlphaImage = new ImageIcon(Main.class.getResource("/Media/arrow-down-a-z.png"));
+        ImageIcon sortByQtyImage = new ImageIcon(Main.class.getResource("/Media/arrow-up-0-1.png"));
+        ImageIcon sortByDateImage = new ImageIcon(Main.class.getResource("/Media/calendar-arrow-down.png"));
+        ImageIcon sortByPriceImage = new ImageIcon(Main.class.getResource("/Media/dollar-sign.png"));
+        
+        JLabel sortByQtyIcon = new JLabel(sortByQtyImage);
+        JLabel sortByAlphaIcon = new JLabel(sortByAlphaImage);
+        JLabel sortByDateIcon = new JLabel(sortByDateImage);
+        JLabel sortByPriceIcon = new JLabel(sortByPriceImage);
+               
+        JPanel filtersContainer = new JPanel();
+        JButton sortByNameBtn = new JButton();
+        JButton sortByQtyBtn = new JButton();
+        JButton sortByDateBtn = new JButton();
+        JButton sortByPriceBtn = new JButton();
+        
+        sortByNameBtn.add(sortByAlphaIcon);
+        sortByQtyBtn.add(sortByQtyIcon);
+        sortByDateBtn.add(sortByDateIcon);
+        sortByPriceBtn.add(sortByPriceIcon);
+        
+        JLabel byName = new JLabel("sort by name");
+        JLabel byQty = new JLabel("sort by quantity");
+        JLabel byDate = new JLabel("sort by date");
+        JLabel byPrice = new JLabel("sort by price");
+        
+        byName.setBorder(BorderFactory.createEmptyBorder(0,25,0,0));
+        byQty.setBorder(BorderFactory.createEmptyBorder(0,25,0,0));
+        byDate.setBorder(BorderFactory.createEmptyBorder(0,25,0,0));
+        byPrice.setBorder(BorderFactory.createEmptyBorder(0,25,0,0));
+        
+        sortByNameBtn.add(byName);
+        sortByQtyBtn.add(byQty);
+        sortByDateBtn.add(byDate);
+        sortByPriceBtn.add(byPrice);
         
 
+        Styles styles = new Styles();
+        ArrayList<JButton> fBtns = new ArrayList<>();
+        fBtns.add(sortByQtyBtn);
+        fBtns.add(sortByNameBtn);
+        fBtns.add(sortByDateBtn);
+        fBtns.add(sortByPriceBtn);
+        styles.setButtonsStyling(fBtns);
+        
+       
+        filtersContainer.add(sortByNameBtn);
+        filtersContainer.add(sortByQtyBtn);
+        filtersContainer.add(sortByDateBtn);
+        filtersContainer.add(sortByPriceBtn);
+        
+        JLabel title = new JLabel(logoIcon);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        tab.add(title);
+        
         String[] columnNames = {"ID", "Name", "Category", "Quantity", "Price", "TotalAmount", "Supplier ID", "Supplier Name", "Supplier Email"};
 
         stockTableModel = new DefaultTableModel(columnNames, 0) {
@@ -1123,7 +1251,20 @@ public class Main {
                 return false;
             }
         };
-        populateTable();
+        
+        populateTable(0);
+        sortByQtyBtn.addActionListener(e -> {
+            populateTable(1);
+        });
+        sortByNameBtn.addActionListener(e -> {
+            populateTable(2);
+        });
+        sortByPriceBtn.addActionListener(e -> {
+            populateTable(3);
+        });
+        sortByDateBtn.addActionListener(e -> {
+            populateTable(0);
+        });
        
         JTable table = new JTable(stockTableModel);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -1131,21 +1272,34 @@ public class Main {
         JPanel container = new JPanel(new BorderLayout());
         container.add(scrollPane, BorderLayout.CENTER);
 
-        tab.add(container, BorderLayout.CENTER);
+        tab.add(container);
+        tab.add(filtersContainer);
+
     }
     
-    public static void populateTable(){
+    public static void populateTable(int sortIndex){
         StocksMonitoring monitor = new StocksMonitoring();
         stockTableModel.setRowCount(0);
-        ArrayList<ProductSupplierPair> products = monitor.loadProducts();
-        products.sort(Comparator.comparingInt(p -> p.getProduct().getQuantity()));
+            ArrayList<ProductSupplierPair> products = monitor.loadProducts();
+        switch(sortIndex){
+            case 1:
+                products.sort(Comparator.comparingInt(p -> p.getProduct().getQuantity()));
+                break;
+            case 2:
+                Collections.sort(products, Comparator.comparing(p -> p.getProduct().getName().toLowerCase()));
+                break;
+            case 3:
+                products.sort(Comparator.comparingDouble(p -> p.getProduct().getPrice()));
+                break;
+            default:
+                break;
+        }
         for (ProductSupplierPair product : products) {
             stockTableModel.addRow(new Object[]{product.getProduct().getID(), product.getProduct().getName(), product.getProduct().getCategory(), product.getProduct().getQuantity(), product.getProduct().getPrice(), product.getTotalAmount(), product.getSupplier().getID(), product.getSupplier().getName(), product.getSupplier().getEmail()});
         }
     }
-    public static DefaultTableModel reorderTableModel;
 
-    public static void notificationHandler(JFrame app){
+    public static void notificationHandler(JFrame app, ProductSupplierPair p){
         JDialog notificationPopUp = new JDialog(app, "Reorder Products");
         notificationPopUp.setLocationRelativeTo(null);
         notificationPopUp.setSize(600, 300);    
@@ -1166,24 +1320,33 @@ public class Main {
         
         JPanel container = new JPanel();
         container.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
-        
-        
-        
+               
         notificationPopUp.add(container);
-        renderReorderProducts(container, notificationPopUp, cancel);
+        renderReorderProducts(container, notificationPopUp, cancel, p);
     }
     
-    public static void renderReorderProducts(JPanel container, JDialog popUp, JButton cancel) {
+    public static void renderReorderProducts(JPanel container, JDialog popUp, JButton cancel, ProductSupplierPair p) {
+        HistoryManager historyManager = new HistoryManager();
         container.removeAll();
         ImageIcon logo = new ImageIcon(Main.class.getResource("/Media/logo.png"));
         Image logoImage = logo.getImage();
         Image resizedLogo = logoImage.getScaledInstance(192, 30, Image.SCALE_SMOOTH);
         ImageIcon logoIcon = new ImageIcon(resizedLogo);
         JLabel logoLabel = new JLabel(logoIcon);
-        
+        boolean isFound = false;
         container.add(logoLabel);
         Reorder reorder = new Reorder();
         ArrayList<ProductSupplierPair> products = reorder.loadProducts();
+        for(ProductSupplierPair product: products){
+            if(product.getProduct().getID() == p.getProduct().getID()){
+                product.setProduct(p.getProduct());
+                isFound = true;
+                break;
+            }
+        }
+        if(!isFound && !p.getProduct().getName().isEmpty()){
+            products.add(p);
+        }
         ImageIcon darkSaveIcon = new ImageIcon(Main.class.getResource("/Media/saveDark.png"));
         if (!products.isEmpty()) {
             container.setLayout(new GridLayout(0, 1, 10, 10));
@@ -1209,8 +1372,11 @@ public class Main {
                 reorderBtn.addActionListener(e -> {
                     if (!reorderQty.getText().isEmpty()) {
                         reorder.ReorderProduct(product.getProduct(), parseInt(reorderQty.getText()));
-                        renderReorderProducts(container, popUp, cancel);
-                        populateTable();
+                        product.getProduct().setQuantity(product.getProduct().getQuantity() + parseInt(reorderQty.getText()));
+                        renderReorderProducts(container, popUp, cancel, new ProductSupplierPair(new Product(), new Supplier()));
+                        populateTable(0);
+                        historyManager.addLog(new HistoryLog(product.getProduct().getID(), "Reordered", product.getProduct(), product.getSupplier(), ""));
+                        updateHistory();
                     }
                     if (products.isEmpty()) {
                         popUp.setVisible(false);

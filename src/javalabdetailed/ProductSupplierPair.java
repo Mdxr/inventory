@@ -32,4 +32,7 @@ public class ProductSupplierPair {
     public void setTotalAmount(double totalAmount){
         this.totalAmount = totalAmount;
     }
+    public void setProduct(Product p){
+        this.product = p;
+    }
 }

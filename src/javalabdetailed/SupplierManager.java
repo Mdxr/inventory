@@ -35,4 +35,19 @@ public class SupplierManager {
             return "Error Fetching Supplier (sManager)" + e;
         }
     }
+    
+    public int getSupplierID(String name, String email){
+        String sql = "SELECT * FROM suppliers WHERE name=? AND email=?";
+        try(Connection conn = DBManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, name);
+            stmt.setString(2, email);
+            
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getInt("id") : 0;
+        } catch (SQLException e){
+            System.err.println("Error fetching supplier " + e);
+            return 0;
+        }
+    }
 }

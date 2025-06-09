@@ -11,16 +11,15 @@ public class User {
     private int id;
     private String name;
     private String email;
-    private String password;
+    private char[] password;
     private boolean isVerified;
     
     public User(){
         this.id = 0;
         this.name = "";
         this.email = "";
-        this.password = "";
     }
-    public User(String name, String email, String password){
+    public User(String name, String email, char[] password){
         this.name = name;
         this.email = email;
         this.password = password;
@@ -31,7 +30,7 @@ public class User {
     public String getEmail(){
         return email;
     }
-    public String getPassword(){
+    public char[] getPassword(){
         return password;
     }
     public void setID(int id){
@@ -49,7 +48,7 @@ public class User {
     public void setName(String name){
         this.name = name;
     }
-    public void setPassword(String password){
+    public void setPassword(char[] password){
         this.password = password;
     }
     public void setEmail(String email){

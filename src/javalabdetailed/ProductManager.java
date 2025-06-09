@@ -33,7 +33,7 @@ public class ProductManager {
                             addStmt.setInt(3, product.getID());
                             
                             addStmt.execute();
-                            return "updated success";
+                            return "updated";
                         } catch (SQLException e){
                             return "Error Updating product " + e;
                         }
@@ -141,6 +141,20 @@ public class ProductManager {
             stmt.execute();
         } catch (SQLException e){
             System.out.println("Error deleting record " + e);
+        }
+    }
+    
+    public int getProductID(String name, int supplierID){
+        String sql = "SELECT * FROM products WHERE name=? AND supplier_id=?";
+        try(Connection conn = DBManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, name);
+            stmt.setInt(2, supplierID);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getInt("id") : 0;
+        } catch (SQLException e){
+            System.out.println("Error deleting record " + e);
+            return 0;
         }
     }
     

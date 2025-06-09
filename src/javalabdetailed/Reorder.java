@@ -58,10 +58,10 @@ public class Reorder {
             stmt.setInt(3, product.getID());
             
             stmt.execute();
-        
+       
         } catch (SQLException e){
             System.out.println("Error Updating product " + e);
         }
-        
     }
+
 }

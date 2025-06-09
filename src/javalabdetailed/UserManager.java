@@ -26,7 +26,7 @@ public class UserManager {
                     stmt.setString(1, user.getName());
                     stmt.setString(2, user.getEmail());
 
-                    String hashedPwd = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+                    String hashedPwd = BCrypt.hashpw(new String(user.getPassword()), BCrypt.gensalt());
 
                     stmt.setString(3, hashedPwd);
                     stmt.executeUpdate();
@@ -50,7 +50,7 @@ public class UserManager {
             pstmt.setString(1, user.getEmail());
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
-                if(BCrypt.checkpw(user.getPassword(), rs.getString("password"))){
+                if(BCrypt.checkpw(new String(user.getPassword()), rs.getString("password"))){
                     if(rs.getBoolean("verified")){
                         if(rs.getString("email").contains("super")){
                             return "success (super)";
@@ -78,7 +78,7 @@ public class UserManager {
                 Statement stmt = conn.createStatement()){
             ResultSet rs = stmt.executeQuery(sql);
             while(rs.next()){
-                User tempUser = new User(rs.getString("name"), rs.getString("email"), rs.getString("password"));
+                User tempUser = new User(rs.getString("name"), rs.getString("email"), rs.getString("password").toCharArray());
                 tempUser.setVerfied(rs.getBoolean("verified"));
                 tempUser.setID(rs.getInt("id"));
                 users.add(tempUser);
