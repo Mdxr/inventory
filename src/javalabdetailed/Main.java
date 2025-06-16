@@ -3,7 +3,7 @@ package javalabdetailed;
 import javax.swing.*;
 import java.awt.*;
 import com.formdev.flatlaf.*;
-import static javalabdetailed.GUI.register;
+import static javalabdetailed.views.GUI.register;
 
 public class Main {
     public static boolean editMode;
