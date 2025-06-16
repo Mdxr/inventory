@@ -50,4 +50,28 @@ public class SupplierManager {
             return 0;
         }
     }
+    public void deleteSupplier(Supplier supplier){
+        int count = 0;
+        String sql = "SELECT * FROM products WHERE supplier_id=?";
+        try(Connection conn = DBManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, supplier.getID());
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                count++;
+            }
+            if(count < 1){
+                sql = "DELETE FROM suppliers WHERE id=?";
+                try(PreparedStatement sStmt = conn.prepareStatement(sql)){
+                    sStmt.setInt(1, supplier.getID());
+                    
+                    sStmt.execute();
+                } catch (SQLException e){
+                    System.out.println("Error Deleting supplier " + e);
+                }
+            }
+        } catch (SQLException e){
+            System.out.println("Error Fetching products " + e);
+        }
+    }
 }

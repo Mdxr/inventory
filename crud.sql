@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 09, 2025 at 03:16 PM
+-- Generation Time: Jun 16, 2025 at 06:49 AM
 -- Server version: 10.11.13-MariaDB-0ubuntu0.24.04.1
 -- PHP Version: 8.3.6
 
@@ -66,7 +66,22 @@ INSERT INTO `history_logs` (`id`, `product_name`, `supplier_name`, `product_id`,
 (23, 'e5540', 'dell', 1, 'Updated', '2025-06-08'),
 (24, 'Thinkpad x200', 'Lenovo', 15, 'Reordered', '2025-06-08'),
 (25, 'e5540', 'dell', 1, 'Reordered', '2025-06-08'),
-(26, 'e5540', 'dell', 1, 'Reordered', '2025-06-08');
+(26, 'e5540', 'dell', 1, 'Reordered', '2025-06-08'),
+(27, 'e5540', 'dell', 1, 'Updated', '2025-06-09'),
+(28, 'r3', 'Aquas', 6, 'Updated', '2025-06-09'),
+(29, 'jordan 4', 'nike', 8, 'Updated', '2025-06-09'),
+(30, 'r3', 'Aquas', 6, 'Reordered', '2025-06-10'),
+(31, 'e5540', 'dell', 1, 'Reordered', '2025-06-14'),
+(32, 'r3', 'Aquas', 6, 'Reordered', '2025-06-14'),
+(33, 'jordan 4', 'nike', 8, 'Reordered', '2025-06-14'),
+(34, 'New Product', 'New', 23, 'Added', '2025-06-14'),
+(35, 'New Product', 'New', 23, 'Updated', '2025-06-14'),
+(36, 'New Product', 'New', 23, 'Reordered', '2025-06-14'),
+(37, 'abc', 'gh', 0, 'Deleted', '2025-06-14'),
+(38, 'New Product', 'New', 0, 'Deleted', '2025-06-14'),
+(39, 'LC122', 'Lenovo', 24, 'Added', '2025-06-15'),
+(40, 'lx355', 'dell', 18, 'Reordered', '2025-06-15'),
+(41, 'r3', 'Aquas', 0, 'Deleted', '2025-06-16');
 
 -- --------------------------------------------------------
 
@@ -90,15 +105,14 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `category`, `quantity`, `supplier_id`, `price`, `total_amount`, `added_at`) VALUES
-(1, 'e5540', 'laptop', 25, 2, 10, 250, '2025-05-23'),
+(1, 'e5540', 'laptop', 20, 2, 10, 200, '2025-05-23'),
 (4, 'v40', 'Smart Phone', 65, 13, 1000, 65000, '2025-05-25'),
-(6, 'r3', 'Smart Phone', 30, 24, 1200, 36000, '2025-05-25'),
-(7, 'abc', 'DEF', 55, 16, 1000, 55000, '2025-05-25'),
 (8, 'jordan 4', 'shoes', 20, 19, 1230, 24600, '2025-05-25'),
 (10, 'thinkpad 3.5', 'Laptop', 20, 21, 1200, 13200, '2025-05-25'),
 (13, 'air dunks', 'shoes', 600, 19, 1000, 600000, '2025-05-27'),
 (15, 'Thinkpad x200', 'Laptop', 105, 21, 12400, 1302000, '2025-05-28'),
-(18, 'lx355', 'charger', 100, 2, 1000, 100000, '2025-06-06');
+(18, 'lx355', 'charger', 150, 2, 1000, 150000, '2025-06-06'),
+(24, 'LC122', 'Charger', 100, 21, 150, 15000, '2025-06-15');
 
 -- --------------------------------------------------------
 
@@ -119,7 +133,6 @@ CREATE TABLE `suppliers` (
 INSERT INTO `suppliers` (`id`, `name`, `email`) VALUES
 (1, 'nike', 'nike@kuss.com'),
 (2, 'dell', 'products@dell.com'),
-(3, 'DELL', 'D'),
 (4, 'rjk', 'tejkq'),
 (5, 'abc', 'cb'),
 (6, 'abc', 'bcbbc'),
@@ -146,7 +159,8 @@ INSERT INTO `suppliers` (`id`, `name`, `email`) VALUES
 (27, 'kjgajkl', 'kjgja'),
 (28, 'tested', 'tested@gmail.com'),
 (29, 'lex', 'lex@lex.com'),
-(30, 'ksajdfh', 'KASDHF');
+(30, 'ksajdfh', 'KASDHF'),
+(31, 'New', 'new@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -168,10 +182,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `verified`) VALUES
 (33, 'Mudasser Khan', 'kmudasser44@gmail.com', '$2a$10$icPms.8TzNOg7ObXbfUfs.ZieSEhowabAN3LLyNGp56wCkT9TAEl6', 1),
-(35, 'admin', 'admin@super', '$2a$10$2S4iiG4MF8cSUv493CVP6e.cOm3zfSL1y9/qExAvTQ13aF8ggz7jm', 1),
-(37, 'zainab', 'zaini@gmail.com', '$2a$10$uEYEFRS39scsjDIk.7eefugDW1XII3sf9F1KbXIhnHctLE4YHwlQq', 0),
-(39, 'Mudasser Khan', 'dummy@gmail.com', '$2a$10$cph/2RP5EKWgePjWwiAV9uX6FSEtJo98UOI7Ov67MtZPurkO/RhMu', 0),
-(40, 'Zainab', 'zaini@mail.com', '$2a$10$vrWEr6eq6.cmZc65vgkxuOda845dElyeTsJeFAM.1ckAwzW1omrQO', 1);
+(35, 'admin', 'admin@super', '$2a$10$2S4iiG4MF8cSUv493CVP6e.cOm3zfSL1y9/qExAvTQ13aF8ggz7jm', 1);
 
 --
 -- Indexes for dumped tables
@@ -209,25 +220,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `history_logs`
 --
 ALTER TABLE `history_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
