@@ -6,9 +6,6 @@ import com.formdev.flatlaf.*;
 import static javalabdetailed.views.GUI.register;
 
 public class Main {
-    public static boolean editMode;
-    public static boolean isSuper;
-
     public static void main(String[] args) {
         try {
             UIManager.put("Component.focusColor", Color.decode("#73d187"));

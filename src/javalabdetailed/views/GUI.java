@@ -29,6 +29,10 @@ public class GUI {
     private static boolean editMode;
     private static boolean isSuper;
     private static String admin;
+    private static JPanel insightsPanel;
+    private static JPanel stocksPanel;
+    private static JFrame appFrame;
+    private static JTabbedPane jPane;
 
     public static void register(JFrame auth, JFrame app) {
         UserManager authManager = new UserManager();
@@ -359,7 +363,9 @@ public class GUI {
     }
 
     public static void inventory(JFrame app) {
+        appFrame = app;
         JTabbedPane pane = new JTabbedPane();
+        jPane = pane;
         JPanel entryForm = new JPanel();
         JPanel table = new JPanel();
         JPanel adminPanel = new JPanel();
@@ -490,21 +496,20 @@ public class GUI {
         left.setBorder(new FlatRoundBorder());
         rightTop.setBorder(new FlatRoundBorder());
         rightBottom.setBorder(new FlatRoundBorder());
+        
+        stocksPanel = left;
 
-        JLabel leftTitle = new JLabel("Manage Stocks");
         JLabel rightTitle = new JLabel("Manage Users");
         JLabel rightBTitle = new JLabel("Insights");
-        leftTitle.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
-        leftTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+       
         rightTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         rightTitle.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
-        leftTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        
         rightTitle.setFont(new Font("Arial", Font.BOLD, 16));
         rightBTitle.setFont(new Font("Arial", Font.BOLD, 16));
         rightBTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         rightBTitle.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
 
-        left.add(leftTitle);
         rightTop.add(rightTitle);
         rightBottom.add(rightBTitle);
 
@@ -516,12 +521,14 @@ public class GUI {
         container.add(left);
         container.add(right);
         adminPanel.add(container);
-        manageStocks(left, pane, leftTitle, frame);
+        manageStocks(left, pane, frame);
         manageUsers(rightTop, rightTitle);
-        insights(rightBottom);
+        insightsPanel = rightBottom;
+        insights(insightsPanel);
     }
 
     public static void insights(JPanel insights) {
+        insights.removeAll();
         Insights insightsManager = new Insights();
         JPanel container = new JPanel();
         insights.setMaximumSize(new Dimension(Short.MAX_VALUE, insights.getPreferredSize().height));
@@ -592,7 +599,11 @@ public class GUI {
         insights.add(container);
     }
 
-    public static void manageStocks(JPanel container, JTabbedPane pane, JLabel title, JFrame frame) {
+    public static void manageStocks(JPanel container, JTabbedPane pane, JFrame frame) {
+        JLabel leftTitle = new JLabel("Manage Stocks");
+        leftTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        leftTitle.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
+        leftTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         ProductManager manager = new ProductManager();
         SupplierManager supplierManager = new SupplierManager();
         HistoryManager historyManager = new HistoryManager();
@@ -601,7 +612,7 @@ public class GUI {
         JPanel records = new JPanel();
         records.setBorder(BorderFactory.createEmptyBorder());
         container.removeAll();
-        container.add(title);
+        container.add(leftTitle);
         JScrollPane scrollPane = new JScrollPane(records);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -657,9 +668,10 @@ public class GUI {
 
                 historyManager.addLog(new HistoryLog(0, "Deleted", product.getProduct(), product.getSupplier(), ""));
 
-                manageStocks(container, pane, title, frame);
+                manageStocks(container, pane, frame);
                 populateTable(0);
                 updateHistory();
+                insights(insightsPanel);
             });
             record.setMaximumSize(new Dimension(Short.MAX_VALUE, record.getPreferredSize().height));
             record.setBorder(new FlatRoundBorder());
@@ -796,7 +808,6 @@ public class GUI {
 
         ImageIcon darkSaveIcon = new ImageIcon(Main.class.getResource("/Media/saveDark.png"));
         JLabel dSIcon = new JLabel(darkSaveIcon);
-//        dSIcon.setBorder(BorderFactory.createEmptyBorder(0, 130, 0, 0));
 
         JButton addProductButton = new JButton();       
         JLabel addLabel = new JLabel("Add Product");    
@@ -909,6 +920,8 @@ public class GUI {
                         status.setForeground(Color.decode("#73d187"));
                         historyManager.addLog(new HistoryLog(0, "Added", product, supplier, ""));
                         populateTable(0);
+                        insights(insightsPanel);
+                        manageStocks(stocksPanel, jPane, appFrame);
                         updateHistory();
                     } else {
                         status.setText("Error Occured adding " + product.getName());
@@ -922,6 +935,8 @@ public class GUI {
                         }
                         historyManager.addLog(new HistoryLog(0, "Updated", product, supplier, ""));
                         populateTable(0);
+                        insights(insightsPanel);
+                        manageStocks(stocksPanel, jPane, appFrame);
                         updateHistory();
                     }
                 }
@@ -1178,6 +1193,8 @@ public class GUI {
                                 }
 
                                 populateTable(0);
+                                insights(insightsPanel);
+                                manageStocks(stocksPanel, jPane, appFrame);
                                 updateHistory();
                             } else {
                                 status.setText("Error Occurred!");
@@ -1240,12 +1257,6 @@ public class GUI {
         labels.add(sNameLabel);
         labels.add(sEmailLabel);
 
-//        Styles styles = new Styles();
-//        styles.setBackgroundsStyling(bgs);
-//        styles.setTextFieldsStyling(inputs);
-//        styles.setButtonsStyling(allBtns);
-//        styles.setLabelStyling(labels);
-//        styles.setTitleStyling(title);
         saveProductButton.setBackground(Color.decode("#73d187"));
         saveProductButton.setForeground(Color.DARK_GRAY);
 
@@ -1592,6 +1603,8 @@ public class GUI {
                         renderReorderProducts(container, popUp, cancel, new ProductSupplierPair(new Product(), new Supplier()));
                         populateTable(0);
                         historyManager.addLog(new HistoryLog(product.getProduct().getID(), "Reordered", product.getProduct(), product.getSupplier(), ""));
+                        insights(insightsPanel);
+                        manageStocks(stocksPanel, jPane, appFrame);
                         updateHistory();
                     }
                     if (products.isEmpty()) {
