@@ -6,7 +6,7 @@
 ## Features
 #### Regular User
 - Product Entry
-- Monitor Stocs
+- Monitor Stocks
     - Sort by Name, Date, Price, Quantity
 - History Logs
     - Logs for Adding, Updating, Deleting and Reordering Products
