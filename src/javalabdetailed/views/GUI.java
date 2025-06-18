@@ -1513,21 +1513,22 @@ public class GUI {
         JDialog notificationPopUp = new JDialog(app, "Reorder Products");
         notificationPopUp.setLocationRelativeTo(null);
         notificationPopUp.setSize(600, 300);
-        JButton cancel = new JButton("CANCEL");
+        JButton cancel = new JButton();
         cancel.setFont(new Font("Arial", Font.BOLD, 12));
         cancel.setBackground(Color.decode("#f26878"));
         cancel.setForeground(Color.DARK_GRAY);
 
-        cancel.setMargin(new Insets(7, 7, 7, 7));
-
         ImageIcon cancelIconImage = new ImageIcon(Main.class.getResource("/Media/circle.png"));
         JLabel cancelIcon = new JLabel(cancelIconImage);
-        cancelIcon.setBorder(BorderFactory.createEmptyBorder(0, 230, 0, 0));
         cancel.add(cancelIcon);
+        JLabel cLabel = new JLabel("Cancel");
+        cLabel.setForeground(Color.DARK_GRAY);
+        cancel.add(cLabel);
         cancel.addActionListener(e -> {
             notificationPopUp.dispose();
         });
-
+        Styles styles = new Styles();
+        styles.setButtonStyling(cancel);
         JPanel container = new JPanel();
         container.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
 
@@ -1570,8 +1571,13 @@ public class GUI {
                 qtylabel.setFont(new Font("Arial", Font.BOLD, 12));
                 panel.add(qtylabel);
                 JTextField reorderQty = new JTextField(5);
-                JButton reorderBtn = new JButton("Reorder");
+                JButton reorderBtn = new JButton();
+                JLabel rLabel = new JLabel("Reorder");
+                rLabel.setForeground(Color.DARK_GRAY);
                 reorderBtn.add(dSIcon);
+                reorderBtn.add(rLabel);
+                Styles styles = new Styles();
+                styles.setButtonStyling(reorderBtn);
                 reorderBtn.setBackground(Color.decode("#73d187"));
                 reorderBtn.setForeground(Color.DARK_GRAY);
                 reorderBtn.setFont(new Font("Arial", Font.BOLD, 12));

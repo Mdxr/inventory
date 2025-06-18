@@ -26,10 +26,14 @@ public class Styles {
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         }
     }
+    public void setButtonStyling(JButton btn){
+            btn.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+            btn.setMargin(new Insets(7,10,7,10));
+            btn.setFont(new Font("Arial", Font.BOLD, 12));
+            btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
     public void setTextFieldsStyling(ArrayList<JTextField> fields){
         for(JTextField field : fields){
-//            field.setBackground(colors.lightBlack);
-//            field.setForeground(colors.lightGrey);
             field.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(colors.borderWhite), BorderFactory.createEmptyBorder(5,10,5,10)));
         }
     }
