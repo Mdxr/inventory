@@ -796,10 +796,17 @@ public class GUI {
 
         ImageIcon darkSaveIcon = new ImageIcon(Main.class.getResource("/Media/saveDark.png"));
         JLabel dSIcon = new JLabel(darkSaveIcon);
-        dSIcon.setBorder(BorderFactory.createEmptyBorder(0, 130, 0, 0));
+//        dSIcon.setBorder(BorderFactory.createEmptyBorder(0, 130, 0, 0));
 
-        JButton addProductButton = new JButton("Add Product");
+        JButton addProductButton = new JButton();       
+        JLabel addLabel = new JLabel("Add Product");    
+
+        addProductButton.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+
+        addLabel.setForeground(Color.DARK_GRAY);
+        
         addProductButton.add(dSIcon);
+        addProductButton.add(addLabel);
 
         left.add(pNameLabel);
         left.add(pName);
@@ -965,12 +972,7 @@ public class GUI {
         labels.add(sNameLabel);
         labels.add(sEmailLabel);
         Styles styles = new Styles();
-//        styles.setBackgroundsStyling(bgs);
-//        styles.setTextFieldsStyling(fields);
         styles.setButtonsStyling(btns);
-//        styles.setLabelStyling(labels);
-//        styles.setTitleStyling(title);
-
         addProductButton.setBackground(Color.decode("#73d187"));
         addProductButton.setForeground(Color.DARK_GRAY);
 
@@ -1023,16 +1025,18 @@ public class GUI {
         ImageIcon darkSaveIcon = new ImageIcon(Main.class.getResource("/Media/saveDark.png"));
         JLabel dSIcon = new JLabel(darkSaveIcon);
 
-        JButton saveProductButton = new JButton("Save Product");
-        JButton loadProductButton = new JButton("Load Product");
+        JButton saveProductButton = new JButton();
+        JButton loadProductButton = new JButton();
 
-        lIcon.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 0));
         loadProductButton.add(lIcon);
+        JLabel loadLabel = new JLabel("Load Product");
+        loadProductButton.add(loadLabel);
 
-        sIcon.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 0));
-        dSIcon.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 0));
         saveProductButton.add(sIcon);
+        JLabel saveLabel = new JLabel("Save Product");
 
+        saveProductButton.add(saveLabel);
+        
         saveProductButton.setEnabled(false);
 
         JPanel btns = new JPanel();
@@ -1108,8 +1112,11 @@ public class GUI {
                         err.setText("");
                     }
                     status.setText("Loaded successfully");
+                    saveProductButton.remove(saveLabel);
                     saveProductButton.remove(sIcon);
                     saveProductButton.add(dSIcon);
+                    saveProductButton.add(saveLabel);
+                    saveLabel.setForeground(Color.DARK_GRAY);
                     status.setForeground(Color.decode("#73d187"));
 
                     saveProductButton.addActionListener(f -> {
@@ -1188,6 +1195,12 @@ public class GUI {
                 } else {
                     pIDErr.setText("Product Doesn't Exist");
                     saveProductButton.setEnabled(false);
+                    saveProductButton.remove(dSIcon);
+                    saveProductButton.remove(saveLabel);
+                    saveProductButton.add(sIcon);
+                    saveProductButton.add(saveLabel);
+                    saveLabel.setForeground(Color.WHITE);
+                    
                     for (JTextField tF : inputs) {
                         tF.setText("");
                     }
@@ -1284,11 +1297,6 @@ public class GUI {
         JLabel byDate = new JLabel("sort by date");
         JLabel byPrice = new JLabel("sort by price");
 
-        byName.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
-        byQty.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
-        byDate.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
-        byPrice.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
-
         sortByNameBtn.add(byName);
         sortByQtyBtn.add(byQty);
         sortByDateBtn.add(byDate);
@@ -1337,12 +1345,10 @@ public class GUI {
 
         ImageIcon pdfIcon = new ImageIcon(Main.class.getResource("/Media/pdf-icon.png"));
         JLabel pdfIconL = new JLabel(pdfIcon);
-        pdfLabel.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
         generateReportBtn.add(pdfIconL);
 
         ImageIcon csvIcon = new ImageIcon(Main.class.getResource("/Media/csv.png"));
         JLabel csvIconL = new JLabel(csvIcon);
-        csvLabel.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
         generateCSVReportBtn.add(csvIconL);
 
         generateReportBtn.add(pdfLabel);

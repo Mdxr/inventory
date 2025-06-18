@@ -5,6 +5,7 @@
 package Styles;
 
 import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.*;
@@ -19,6 +20,7 @@ public class Styles {
     Colors colors = new Colors();
     public void setButtonsStyling(ArrayList<JButton> btns){
         for(JButton btn: btns){
+            btn.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
             btn.setMargin(new Insets(7,10,7,10));
             btn.setFont(new Font("Arial", Font.BOLD, 12));
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));

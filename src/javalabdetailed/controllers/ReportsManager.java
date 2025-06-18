@@ -20,29 +20,31 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import java.io.FileOutputStream;
-import java.net.URL;
-import javax.swing.JTable;
-import javax.swing.table.TableModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+
+import java.util.List;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+
 import javalabdetailed.views.GUI;
 import javalabdetailed.models.Product;
 import javalabdetailed.models.ProductSupplierPair;
 import javalabdetailed.models.Supplier;
+
 
 /**
  *
  * @author mudasser
  */
 public class ReportsManager {
-
     public static void generateStockReport(JTable table, String admin) {
         String dest = "reports/stock/pdf/stock_report_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm")) + ".pdf";
         try (PdfWriter writer = new PdfWriter(new FileOutputStream(dest)); PdfDocument pdf = new PdfDocument(writer); Document document = new Document(pdf, PageSize.A4.rotate());) {

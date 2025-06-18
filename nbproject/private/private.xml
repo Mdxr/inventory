@@ -3,8 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/media/mudasser/Personal/java/DBComplete/JavaLabDetailed/src/javalabdetailed/Main.java</file>
-            <file>file:/media/mudasser/Personal/java/DBComplete/JavaLabDetailed/src/javalabdetailed/GUI.java</file>
+            <file>file:/media/mudasser/Personal/java/DBComplete/JavaLabDetailed/src/javalabdetailed/views/GUI.java</file>
+            <file>file:/media/mudasser/Personal/java/DBComplete/JavaLabDetailed/src/javalabdetailed/controllers/ReportsManager.java</file>
+            <file>file:/media/mudasser/Personal/java/DBComplete/JavaLabDetailed/src/javalabdetailed/models/ProductSupplierPair.java</file>
         </group>
     </open-files>
 </project-private>
