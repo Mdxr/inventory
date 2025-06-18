@@ -801,8 +801,6 @@ public class GUI {
         JButton addProductButton = new JButton();       
         JLabel addLabel = new JLabel("Add Product");    
 
-        addProductButton.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
-
         addLabel.setForeground(Color.DARK_GRAY);
         
         addProductButton.add(dSIcon);
